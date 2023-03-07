@@ -9,7 +9,7 @@ public:
     }
     long long minimumTime(vector<int>& time, int tot) {
         long long l=1;
-       long long r = 1LL * *max_element(time.begin(), time.end()) * tot;
+       long long r = (long long)time[0]*tot;
         while(l<r){
             long long m=(l+r)/2;
             if(enough(time,m,tot)) r=m;
