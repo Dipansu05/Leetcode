@@ -27,7 +27,7 @@ public:
                 d--;
             }
             while(f){
-                 if(f==s) return f;
+                if(f==s) return f;
                 f=f->next;
                 s=s->next;
                
@@ -40,11 +40,10 @@ public:
                 d--;
             }
             while(s){
-                 if(f==s) return f;
+                if(f==s) return f;
                 f=f->next;
                 s=s->next;
-                
-            }
+                }
         }
         return NULL;
     }
