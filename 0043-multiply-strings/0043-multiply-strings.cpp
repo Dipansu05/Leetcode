@@ -15,6 +15,5 @@ public:
         string ans="";
         while(i<v.size()) ans+=to_string(v[i++]);
         return ans;
-        
-    }
+        }
 };
