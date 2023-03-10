@@ -2,6 +2,7 @@
 class Solution {
 public:
     int s=0;
+    int x;
     vector<int> v;
     Solution(ListNode* head) {
         while(head){
@@ -11,7 +12,7 @@ public:
         }
     }
     int getRandom() {
-        int x=(rand()%s);
+        x=(rand()%s);
         return v[x];
         }
 };
