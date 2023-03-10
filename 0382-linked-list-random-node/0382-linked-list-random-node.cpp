@@ -10,7 +10,6 @@
  */
 class Solution {
 public:
-    int i=1;
     int s=0;
     vector<int> v;
     Solution(ListNode* head) {
@@ -21,13 +20,10 @@ public:
             s++;
         }
     }
-    
     int getRandom() {
         int x=(rand()%s);
-        //i=(i+2)%s;
         return v[x];
-        
-    }
+        }
 };
 
 /**
