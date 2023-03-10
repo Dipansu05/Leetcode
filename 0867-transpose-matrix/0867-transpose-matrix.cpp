@@ -9,6 +9,7 @@ public:
                t.push_back(matrix[j][i]);
             }
             ans.push_back(t);
+            t.clear();
         }
         return ans;
     }
