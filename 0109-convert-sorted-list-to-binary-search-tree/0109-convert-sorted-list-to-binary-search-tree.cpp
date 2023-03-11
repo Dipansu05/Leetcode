@@ -21,21 +21,19 @@
  */
 class Solution {
 public:
-    TreeNode* convert(ListNode* s,ListNode* e){
-        if(s==e) return NULL;
-        ListNode* sl=s,*fs=s;
-        while(fs!=e and fs->next!=e){
-            sl=sl->next;
-            fs=fs->next->next;
-            }
-        TreeNode* ans=new TreeNode(sl->val);
-        ans->left=convert(s,sl);
-        ans->right=convert(sl->next,e);
-        return ans;
-        
-    }
     TreeNode* sortedListToBST(ListNode* head) {
         if(!head) return NULL;
-        return convert(head,NULL);
+        if(!head->next) return new TreeNode(head->val);
+        ListNode* s=head,*f=head,*p=NULL;
+        while(f and f->next){
+            p=s;
+            s=s->next;
+            f=f->next->next;
+        }
+        p->next=NULL;
+        TreeNode* ans=new TreeNode(s->val);
+        ans->left=sortedListToBST(head);
+        ans->right=sortedListToBST(s->next);
+        return ans;
     }
 };
