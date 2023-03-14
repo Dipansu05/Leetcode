@@ -16,7 +16,7 @@ public:
         num=num*10+root->val;
         if(!root->left and !root->right) sum+=num;
         solve(root->left,num,sum);
-         solve(root->right,num,sum);
+        solve(root->right,num,sum);
         num/= 10;
     }
     int sumNumbers(TreeNode* root) {
