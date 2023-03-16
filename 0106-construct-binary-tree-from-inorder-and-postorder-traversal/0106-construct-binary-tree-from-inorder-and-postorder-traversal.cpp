@@ -24,9 +24,7 @@ public:
     }
     TreeNode* buildTree(vector<int>& in, vector<int>& post) {
         unordered_map<int,int> m;
-        for(int i=0;i<in.size();i++){
-            m[in[i]]=i;
-        }
+        for(int i=0;i<in.size();i++) m[in[i]]=i;
         int rootid=post.size()-1;
         return  buildTreeHelper(in,post,m,rootid,0,in.size()-1);
     }
