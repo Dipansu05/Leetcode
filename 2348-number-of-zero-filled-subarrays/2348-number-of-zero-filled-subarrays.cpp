@@ -6,15 +6,13 @@ public:
         for(int i=0;i<nums.size();i++){
             if(nums[i]==0){
                 c++;
+                ans+=c;
             }
             else{
-                ans += (c*(c+1))/2;
                 c = 0;
             }
         }
-        if(c != 0){
-            ans += (c*(c+1))/2;
-        }
+        
         return ans;
     }
 };
