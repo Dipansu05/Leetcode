@@ -12,7 +12,6 @@ public:
                 c = 0;
             }
         }
-        
-        return ans;
+         return ans;
     }
 };
