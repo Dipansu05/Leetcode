@@ -8,12 +8,12 @@ public:
                 c++;
             }
             else{
-                ans+=(c*(c+1))/2;
-                c=0;
+                ans += (c*(c+1))/2;
+                c = 0;
             }
         }
-        if(c!=0){
-            ans+=(c*(c+1))/2;
+        if(c != 0){
+            ans += (c*(c+1))/2;
         }
         return ans;
     }
