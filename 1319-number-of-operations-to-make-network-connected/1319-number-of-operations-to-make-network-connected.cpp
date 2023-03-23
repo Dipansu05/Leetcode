@@ -1,31 +1,57 @@
 class Solution {
-    void dfs(vector<int> adj[], vector<bool> &visited, int src)
+public:
+
+    void dfs_for_components(vector<vector<int>>& adj, int u, vector<bool>& vis)
     {
-        visited[src] = true;
-        for(int i : adj[src]){
-            if(!visited[i]){
-                dfs(adj, visited, i);
+        vis[u] = true;
+        
+        for(auto v : adj[u])
+        {
+            if(vis[v] == false)
+            {
+                dfs_for_components(adj, v, vis);
             }
         }
     }
-public:
-    int makeConnected(int n, vector<vector<int>>& arr) {
-        int len = arr.size();
-        if(len<n-1) return -1;
-         vector<int> adj[n];
-        for(auto v : arr)
+    
+    int makeConnected(int n, vector<vector<int>>& connections) {
+
+        
+        if(connections.size() < n - 1)
         {
-            adj[v[0]].push_back(v[1]);
-            adj[v[1]].push_back(v[0]);
+            return -1;
         }
-        vector<bool> visited(n, false);
-        int ans = 0;
-        for(int i=0; i<n; i++)
-        if(!visited[i])
+
+        
+        vector<vector<int>> adj(n);
+        
+        for(int i = 0; i < connections.size(); i++)
         {
-            dfs(adj, visited, i);
-            ans++;
+            int a = connections[i][0];
+            
+            int b = connections[i][1];
+            
+            adj[a].push_back(b);
+            
+            adj[b].push_back(a);
         }
-        return ans - 1;
+
+        
+        vector<bool> vis(n, false);
+        
+        int components = 0;
+        
+        for(int u = 0; u < n; u++)
+        {
+            if(vis[u] == false)
+            {
+                components++;
+                
+                dfs_for_components(adj, u, vis);
+            }
+        }
+
+        
+        return components - 1;
     }
 };
