@@ -2,19 +2,15 @@ class Solution {
 public:
     int maxSatisfaction(vector<int>& s) {
         sort(s.begin(),s.end());
-        int m=0;
-        int sum;
         int n=s.size();
-        for(int i=0;i<n;i++){
-            int t=1,x=i,sum=0;
-            while(x<n){
-                sum+=t*(s[x]);
-                t++;
-                x++;
+        int sum=s[n-1],val=s[n-1],m=0;
+        for(int i=n-2;i>=0;i--){
+            sum+=s[i];
+            val+=sum;
+            if(val>sum){
+                m=max(m,val);
             }
-            m=max(m,sum);
         }
-          return m;
+        return m>0 ? m:0;
     }
-  
 };
