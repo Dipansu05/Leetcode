@@ -5,7 +5,6 @@ public:
         int e = m-1;
         int mid = s + (e-s)/2;
         int ans = -1;
-        
         while(s <= e){
             long long b = potions[mid];
             if(a*b >= success){
@@ -19,7 +18,6 @@ public:
         }
         return ans;
     }
-    
     vector<int> successfulPairs(vector<int>& spells, vector<int>& potions, long long success) {
         int n = spells.size();
         int m = potions.size();
