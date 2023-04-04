@@ -1,14 +1,16 @@
 class Solution {
 public:
+    int ans=1;
     int partitionString(string s) {
-    int ar[26] , c=1;
-        for(int a: s){
-            if(ar[a-'a']==1){
-                c++;
-                memset(ar,0,sizeof(ar));
+        map<char,int> m;
+        for(int i=0;i<s.size();i++){
+            if(m[s[i]]){
+                ans++;
+                m.clear();
+                m[s[i]]++;
             }
-            ar[a-'a'] = 1;
+            else m[s[i]]++;
         }
-        return c;
+        return ans;
     }
 };
