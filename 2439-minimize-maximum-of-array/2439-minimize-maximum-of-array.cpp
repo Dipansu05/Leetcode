@@ -1,22 +1,11 @@
 class Solution {
 public:
-    bool isValid(int x,vector<int> &nums){
-        long sum=0;
-        for(int i=0;i<nums.size();i++){
-            sum+=nums[i];
-            if(sum> (long)x*(i+1)) return false;
-        }
-        return true;
-    }
     int minimizeArrayValue(vector<int>& nums) {
-     int left=0,right=*max_element(nums.begin(),nums.end());
-    while(left<right){
-        int mid=(left+right)/2;
-        if(isValid(mid,nums)){
-            right=mid;
+        long ans=0,sum=0;
+        for(int i=0;i<nums.size();i++){
+        sum+=nums[i];
+        ans=max(ans,(sum+i)/(i+1));
         }
-        else left=mid+1;
-    }
-        return left;
+        return ans;
     }
 };
