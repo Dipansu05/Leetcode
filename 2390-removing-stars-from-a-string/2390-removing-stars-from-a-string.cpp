@@ -1,13 +1,19 @@
 class Solution {
 public:
     string removeStars(string s) {
-      vector<char> ans;
-        for(auto i : s) {
-            if(ans.size() != 0 && ans.back() != '*' && i == '*') ans.pop_back();
-            else ans.push_back(i);
+string answer="";
+
+        vector<char> vec;
+        for(int i=0; i<s.length(); i++)
+        {
+            if(s[i]!='*')       
+                vec.push_back(s[i]);
+            else if(vec.size()!=0 && s[i]=='*')  
+                vec.pop_back();  
         }
-        string answer = "";
-        for (auto i : ans) answer += i;
+        for(auto x: vec)
+            answer+=x;
+        
         return answer;
     }
 };
