@@ -10,33 +10,32 @@
  */
 class Solution {
 public:
-    int sz(ListNode* head){
-        int x=0;
-        while(head!=NULL){
-        x++;
-            head=head->next;
-        }
-        return x;
-    }
     ListNode* swapNodes(ListNode* head, int k) {
-        ListNode* temp1=head;
-        ListNode* temp2=head;
-        int val1,val2;
-        int x=sz(head);
-        x=x-k;
-        while(k!=1){
-            
-            temp1=temp1->next;
-            k--;
+        head = new ListNode(-1, head);
+        ListNode *prev1 = head, *prev2 = head, *curr = head;
+        while (--k) {
+            prev1 = prev1->next;
+            curr = curr->next;
         }
-        val1=temp1->val;
-        while(x!=0){
-            temp2=temp2->next;
-            x--;
+        curr = curr->next;
+        while (curr->next) {
+            prev2 = prev2->next;
+            curr = curr->next;
         }
-        val2=temp2->val;
-        temp1->val=val2;
-        temp2->val=val1;
-        return head;
+        if (prev1->next == prev2) {
+            curr = prev2->next;
+            prev1->next->next = prev2->next->next;
+            curr->next = prev1->next;
+            prev1->next = curr;
+            return head->next;
+        }
+        curr = prev1->next;
+        prev1->next = prev2->next;
+        prev1 = prev2->next->next;
+        prev2->next->next = curr->next;
+        prev2->next = curr;
+        curr->next = prev1;
+        return head->next;
     }
+    
 };
