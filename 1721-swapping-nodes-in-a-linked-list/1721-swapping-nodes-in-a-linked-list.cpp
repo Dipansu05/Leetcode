@@ -25,6 +25,7 @@ public:
         int x=sz(head);
         x=x-k;
         while(k!=1){
+            
             temp1=temp1->next;
             k--;
         }
