@@ -10,32 +10,38 @@
  */
 class Solution {
 public:
-    ListNode* swapNodes(ListNode* head, int k) {
-        head = new ListNode(-1, head);
-        ListNode *prev1 = head, *prev2 = head, *curr = head;
-        while (--k) {
-            prev1 = prev1->next;
-            curr = curr->next;
-        }
-        curr = curr->next;
-        while (curr->next) {
-            prev2 = prev2->next;
-            curr = curr->next;
-        }
-        if (prev1->next == prev2) {
-            curr = prev2->next;
-            prev1->next->next = prev2->next->next;
-            curr->next = prev1->next;
-            prev1->next = curr;
-            return head->next;
-        }
-        curr = prev1->next;
-        prev1->next = prev2->next;
-        prev1 = prev2->next->next;
-        prev2->next->next = curr->next;
-        prev2->next = curr;
-        curr->next = prev1;
-        return head->next;
+   int getsize(ListNode* head){
+    
+    ListNode* temp = head;
+    int ans = 0;
+    
+    while(temp != NULL){
+        temp = temp->next;
+        ans++;
+    }
+    return ans;
+}
+
+ListNode* swapNodes(ListNode* head, int k) {
+    
+    ListNode* temp1 = head;
+    ListNode* temp2 = head;
+    
+    int i = 0;
+    int n = getsize(head);
+    
+    while(temp1 != NULL && i < k-1){
+        temp1 = temp1->next;
+        i++;
     }
     
+    i = 0;
+    while(temp2 != NULL && i < n-k){
+        temp2 = temp2->next;
+        i++;
+    }
+    swap(temp1->val , temp2->val);
+    return head;
+}
+
 };
