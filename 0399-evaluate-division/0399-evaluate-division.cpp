@@ -1,10 +1,10 @@
 class Solution {
 public:
-    unordered_map<string,vector<pair<string,double>>> graph;  //global declare
+    unordered_map<string,vector<pair<string,double>>> graph;
 
     double DFS(string src , string dest , unordered_set<string>&visited)
     {
-        if(graph.find(src) == graph.end())   //edge condition 
+        if(graph.find(src) == graph.end()) 
         {
             return -1.0;
         }
@@ -16,7 +16,7 @@ public:
 
         visited.insert(src);
 
-        for(auto node : graph[src])   //check for its respective node
+        for(auto node : graph[src])  
         {
             if(visited.find(node.first) != visited.end())
             {
@@ -41,17 +41,17 @@ public:
 
         for(int i =0 ;i<n;i++)
         {
-            string a = equations[i][0];  //first element of equation vector
-            string b = equations[i][1];  // second element of equation  vector
-            double val = values[i];   //corresponding value to elements 
+            string a = equations[i][0];  
+            string b = equations[i][1];  
+            double val = values[i];   
 
-            graph[a].push_back({b,val});    //push it into graph
-            graph[b].push_back({a,(1/val)});  // in opposite dir.
+            graph[a].push_back({b,val});
+            graph[b].push_back({a,(1/val)}); 
         }
           
-        vector<double>result;   //to store result
+        vector<double>result;
 
-        for(auto query : queries)    //iterate for every value
+        for(auto query : queries) 
         {
             unordered_set<string>visited;
             result.push_back(DFS(query[0],query[1],visited));
