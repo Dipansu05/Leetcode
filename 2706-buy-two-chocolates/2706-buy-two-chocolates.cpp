@@ -1,12 +1,11 @@
 class Solution {
 public:
-    int buyChoco(vector<int>& prices, int money) {
-        sort(prices.begin(),prices.end());
-        int a = prices[0]+prices[1];
-        if(a<=money){
-            return money-a;
-        }
+    int buyChoco(vector<int>& p, int m) {
+        sort(p.begin(),p.end());
+        int a = p[0]+p[1];
+        if(a<=m)
+            return m-a;
         else
-            return money;
+            return m;
     }
 };
