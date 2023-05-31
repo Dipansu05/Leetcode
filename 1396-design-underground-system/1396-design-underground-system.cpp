@@ -1,39 +1,28 @@
 class UndergroundSystem {
+unordered_map<int,pair<string,int>> checkInS;
+unordered_map<string,pair<int,int>> checkOutS;
 public:
-    map<pair<string,string> , pair<int ,int>>mpf;
-    map<int , pair<int ,string>>mpi;
-    
     UndergroundSystem() {
-    
     }
     
-    void checkIn(int id, string sn  ,int t ){
-    mpi[id] ={t ,sn};
+    void checkIn(int id, string stationName, int t) {
+        checkInS[id]={stationName,t};
     }
     
-    void checkOut(int id, string sn  ,int t ){
-        if(mpi.find(id)!=mpi.end()){
-            if(mpf.find({mpi[id].second, sn})!= mpf.end()){
-                int p = mpf[{mpi[id].second, sn}].second;
-                int q = mpf[{mpi[id].second, sn}] .first;
-               mpf[{mpi[id].second, sn}] = {t-mpi[id].first + (q) ,p+1};  
-            }
-                else{
-                    mpf[{mpi[id].second, sn}] = {t-mpi[id].first , 1};
-                }
-            
-        }
+    void checkOut(int id, string stationName, int t) {
+        auto temp=checkInS[id];
+        string route =temp.first + " " + stationName;
+        checkInS.erase(id);
+        checkOutS[route].first+=t-temp.second;
+        checkOutS[route].second+=1;
+
     }
     
-    double getAverageTime(string sn, string ss) {
-        return (double)mpf[{sn, ss}].first / (double) mpf[{sn,ss}].second;
+    double getAverageTime(string startStation, string endStation) {
+        string route=startStation+" "+endStation;
+        auto ans=checkOutS[route];
+        double avg=0.0;
+        avg=(double)(ans.first)/ans.second;
+        return avg;
     }
 };
-
-/**
- * Your UndergroundSystem object will be instantiated and called as such:
- * UndergroundSystem* obj = new UndergroundSystem();
- * obj->checkIn(id,stationName,t);
- * obj->checkOut(id,stationName,t);
- * double param_3 = obj->getAverageTime(startStation,endStation);
- */
