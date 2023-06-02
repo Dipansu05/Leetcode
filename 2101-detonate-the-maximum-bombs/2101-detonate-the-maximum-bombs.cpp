@@ -1,43 +1,55 @@
 class Solution {
 public:
-   
-void dfs(std::unordered_map<int, std::unordered_set<int>>& graph, std::unordered_set<int>& visited, int bombIndex) {
-    visited.insert(bombIndex);
-
-    if (graph.find(bombIndex) != graph.end()) {
-        for (int neighbor : graph[bombIndex]) {
-            if (visited.find(neighbor) == visited.end()) {
-                dfs(graph, visited, neighbor);
+    vector<int> adj[105];
+    vector<int> vis;
+    int cnt = 0;
+    void dfs(int i)
+    {
+        vis[i] = 1;
+        cnt++;
+        for(auto it: adj[i])
+        {
+            if(!vis[it])
+            {
+                dfs(it);
             }
         }
     }
-}
-
-int maximumDetonation(std::vector<std::vector<int>>& bombs) {
-    int maxDetonations = 0;
-    int n = bombs.size();
-    std::unordered_map<int, std::unordered_set<int>> graph;
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            if (i == j) continue;
-
-            long long dx = bombs[i][0] - bombs[j][0];
-            long long dy = bombs[i][1] - bombs[j][1];
-            long long distanceSquared = dx * dx + dy * dy;
-
-            if (distanceSquared <= static_cast<long long>(bombs[i][2]) * bombs[i][2]) {
-                graph[i].insert(j);
+    int maximumDetonation(vector<vector<int>>& b) {
+        int n = b.size();
+        vis.resize(n+1);
+        map<int,set<int>> mp;
+        for(int i=0;i<n;i++)
+        {
+            int x1 = b[i][0];
+            int y1 = b[i][1];
+            int r1 = b[i][2];
+            for(int j=0;j<n;j++)
+            {
+                if(i!=j)
+                {
+                   int x2 = b[j][0];
+                    int y2 = b[j][1];
+                    if(1LL*(x1-x2)*(x1-x2)+1LL*(y1-y2)*(y1-y2)<=1LL*r1*r1) 
+                    {
+                        cout<<i<<" "<<j<<endl;
+                        adj[i].push_back(j); 
+                    }
+                }
             }
         }
+        int ans = 0;
+        for(int i=0;i<n;i++)
+        {
+                vis.clear();
+                vis.resize(n+1);
+                cnt = 0; 
+                dfs(i);
+                ans = max(ans,cnt);  
+            
+        }
+        return ans;
+        
+        
     }
-
-    for (int i = 0; i < n; i++) {
-        std::unordered_set<int> visited;
-        dfs(graph, visited, i);
-        maxDetonations = std::max(maxDetonations, static_cast<int>(visited.size()));
-    }
-
-    return maxDetonations;
-}
 };
