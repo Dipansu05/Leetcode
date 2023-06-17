@@ -8,7 +8,7 @@ public:
             return dp[{i,prev}];
         }
         int ind = upper_bound(arr2.begin(),arr2.end(),prev) - arr2.begin();
-        int ans = 2001; //There can be at max 2000 operations
+        int ans = 2001; 
         if(arr1[i]>prev){
             ans = min(ans,func(i+1,arr1[i],n,arr1,arr2,dp));
         }
