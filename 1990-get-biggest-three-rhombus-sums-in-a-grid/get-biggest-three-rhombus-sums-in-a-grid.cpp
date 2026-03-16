@@ -11,8 +11,10 @@ public:
                
                 test.insert(grid[i][j]);
 
-                for(int k=1;;k++){
-                    if(i-k<0 || j-k<0 || i+k >=n || j+k>=m) break;
+                //for(int k=1;;k++){
+                    int k=1;
+
+                    while(i-k>=0 && i+k<n && j-k >=0 && j+k<m){
 
                     int sum{0};
                     int r=i-k;
@@ -32,6 +34,7 @@ public:
                     for(int t=0;t<k;t++) sum+=grid[r-t][c+t];
 
                     test.insert(sum);
+                    k++;
 
                 }
             }
