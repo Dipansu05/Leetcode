@@ -2,10 +2,10 @@ class Solution {
 public:
     int rob(vector<int>& nums) {
         int n=nums.size();
-        //vector<int> include(n);
-        //vector<int> exclude(n);
-        int include[n];
-        int exclude[n];
+        vector<int> include(n);
+        vector<int> exclude(n);
+        //int include[n];
+        //int exclude[n];
         include[0]=nums[0];
         exclude[0]=0;
 
