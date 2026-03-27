@@ -1,64 +1,65 @@
 class Solution {
 public:
-vector<vector<int>> rotation(vector<vector<int>>& grid){
-    int m = grid.size(), n=grid[0].size();
-    vector tmp(n, vector<int>(m));
-    for(int i=0; i< m; i++){
-        for(int j=0; j<n; j++){
-            tmp[j][m-1-i] = grid[i][j];
+    bool solve(vector<vector<int>>& grid){
+    int n=grid.size(), m = grid[0].size();
+    long long bottomSum{0}, topSum{0};
+    vector<int> bottomFreq(100001,0), topFreq(100001,0);
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m; j++){
+            bottomSum += grid[i][j];
+            bottomFreq[grid[i][j]]++;
         }
     }
-    return tmp;
-}
+
+    for(int i=0;i<n-1;i++){
+        for(int j=0;j<m;j++){
+            bottomSum -= grid[i][j];
+            bottomFreq[grid[i][j]]--;
+            topSum += grid[i][j];
+            topFreq[grid[i][j]]++;
+        }
+        if(topSum==bottomSum) return true;
+        long long diffTop=topSum-bottomSum;
+        if(diffTop>0 && diffTop < 100000){
+            int h=i+1,w=m;
+            if(h>1 && w>1){
+                if(topFreq[diffTop]) return true;
+            }
+            else if(h>1 && w==1){
+                if(grid[0][0]==diffTop || grid[i][0]==diffTop) return true;
+            }
+            else if (h==1 && w>1){
+                if(grid[0][0]==diffTop || grid[0][w-1]==diffTop)  return true;
+            }
+        }
+
+        long long diffBot=bottomSum-topSum;
+        if(diffBot> 0 && diffBot<=100000){
+            int h=(n-i-1), w=m;
+            if(h>1 && w>1){
+                if(bottomFreq[diffBot]) return true;
+            }
+            else if(h>1 && w==1){
+                if(grid[i+1][0]==diffBot || grid[n-1][0]==diffBot) return true;
+            }else if(h==1 && w>1){
+                if(grid[n-1][0]==diffBot || grid[n-1][w-1]==diffBot) return true;
+            }
+        }
+       //return false;
+    }
+    return false;
+    }
+
+
     bool canPartitionGrid(vector<vector<int>>& grid) {
-        long long total = 0;
-        long long sum;
-        long long tag;
-        int m = grid.size();
-        int n = grid[0].size();
-        unordered_set<long long> exist;
+        if(solve(grid)) return true;
+        int m = grid.size(), n =  grid[0].size();
+        vector<vector<int>> transpose(n, vector<int> (m));
         for(int i=0;i<m;i++){
-            for(int j=0; j<n;j++){
-                total += grid[i][j];
+            for(int j=0;j<n;j++){
+                transpose[j][i] = grid[i][j];
             }
         }
-        for(int k=0; k<4;  k++){
-            exist.clear();
-            exist.insert(0);
-            sum =0;
-            m = grid.size();
-            n = grid[0].size();
-            if(m<2){
-                grid=rotation(grid);
-                continue;
-            }
-            if(n==1){
-                for(int i=0;i<m-1;i++){
-                    sum += grid[i][0];
-                    tag = sum*2-total;
-                    if(tag==0 || tag==grid[0][0] || tag==grid[i][0]) return true;
-                }
-                grid = rotation(grid);
-                continue;
-            }
-            for(int i=0;i<m-1; i++){
-                for(int j=0; j<n; j++){
-                    exist.insert(grid[i][j]);
-                    sum += grid[i][j];
-                }
-                tag = sum * 2-total;
-                if(i==0){
-                    if(tag==0 || tag == grid[0][0] || tag == grid[0][n-1]){
-                        return true;
-                    }
-                    continue;
-                }
-                if(exist.contains(tag)){
-                    return true;
-                }
-            }
-            grid = rotation(grid);
-        }
-        return false;
+        return solve(transpose);
     }
 };
