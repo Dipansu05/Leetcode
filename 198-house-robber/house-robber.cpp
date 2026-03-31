@@ -1,32 +1,16 @@
 class Solution {
 public:
-int f(int ind, vector<int>& nums, vector<int>& dp){
-    if(ind == 0) return nums[ind];
-    if(ind < 0) return 0;
-
-    if(dp[ind] != -1) return dp[ind];
-    int pick = nums[ind] + f(ind - 2 , nums, dp);
-    int notPick = 0 + f(ind - 1, nums, dp);
-    return dp[ind] = max(pick, notPick);
-}
+    int cal(vector<int>& nums, int i, vector<int>& dp){
+        if(i<0) return 0;
+        if(dp[i]!=-1) return dp[i];
+        int pick=nums[i]+cal(nums,i-2,dp);
+        int not_pick=cal(nums,i-1,dp);
+        int ans = max(pick, not_pick);
+        dp[i]=ans;
+        return dp[i];
+    }
     int rob(vector<int>& nums) {
-        // int n=nums.size();
-        // vector<int> include(n);
-        // vector<int> exclude(n);
-        // //int include[n];
-        // //int exclude[n];
-        // include[0]=nums[0];
-        // exclude[0]=0;
-
-        // for(int i=1;i<n;i++){
-        //     include[i] = nums[i] + exclude[i-1];
-        //     exclude[i] =max(include[i-1], exclude[i-1]);
-        // }
-
-        // return max(include[n-1], exclude[n-1]);
-
-        int n= nums.size();
-        vector<int> dp(n, -1);
-        return f(n-1, nums, dp);
+        vector<int> dp(nums.size(),-1);
+        return cal(nums,nums.size()-1,dp);
     }
 };
