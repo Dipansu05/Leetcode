@@ -1,31 +1,43 @@
 class Solution {
 public:
-    using int2=pair<int, int>;
     vector<int> survivedRobotsHealths(vector<int>& positions, vector<int>& healths, string directions) {
-        const int n=positions.size();
-        vector<int2> robot(n); 
-        for(int i=0;i<n;i++){
-            robot[i]={positions[i],i};
-        }
-        sort(robot.begin(), robot.end(), greater<>());
+        int n = positions.size();
+        vector<int> order(n);
+        iota(order.begin(), order.end(), 0);
+        sort(order.begin(), order.end(), [&](int a, int b){
+            return positions[a] < positions[b];
+        });
 
-        vector<int> stack;
-        for(auto& [pos, i]: robot){
-            if(directions[i]=='L') stack.push_back(i);
-            else{
-                while(!stack.empty() && healths[i]>0){
-                    int j=stack.back();
-                    int x=healths[j]-healths[i];
-                    if(x>0) healths[j]--, healths[i]=0;
-                    else if(x<0) healths[j]=0, healths[i]--, stack.pop_back();
-                    else healths[i]=healths[j]=0, stack.pop_back();
-                    
+        stack<int> st;
+        vector<bool> dead(n, false);
+
+        for(int i : order){
+            if(directions[i]=='R'){
+                st.push(i);
+            }else{
+                while(!st.empty() && directions[st.top()]=='R' ){
+                    int top = st.top();
+                    if(healths[top] > healths[i]){
+                        healths[top]--;
+                        dead[i] = true;
+                        break;
+                    }else if(healths[top] < healths[i]){
+                        healths[i]--;
+                        dead[top] = true;
+                        st.pop();
+                    }else{
+                        dead[i] = true;
+                        dead[top] = true;
+                        st.pop();
+                        break;
+                    }
                 }
+                if(!dead[i]) st.push(i);
             }
         }
-        vector<int> ans;
-        for(auto x: healths) if(x>0) ans.push_back(x);
+        vector<int> result;
+        for(int i =0; i<n;i++) if(!dead[i]) result.push_back(healths[i]);
 
-        return ans;
+        return result;
     }
 };
