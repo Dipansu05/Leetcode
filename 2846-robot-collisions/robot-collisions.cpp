@@ -1,53 +1,30 @@
 class Solution {
 public:
+    using int2=pair<int, int>;
     vector<int> survivedRobotsHealths(vector<int>& positions, vector<int>& healths, string directions) {
-     int n = positions.size();
-     vector<int> idx(n);
-     for(int i = 0; i < n; i++) idx[i] = i;
-
-     sort(idx.begin(), idx.end(), [&](int a, int b) {
-     return positions[a] < positions[b];   
-        });
-
-    stack<int> st;
-
-    for(int id : idx){
-        if (directions[id]=='R'){
-            st.push(id);
+        const int n=positions.size();
+        vector<int2> robot(n); 
+        for(int i=0;i<n;i++){
+            robot[i]={positions[i],i};
         }
-        else{
-            while(!st.empty() && directions[st.top()] == 'R' && healths[id]>0){
-                int top = st.top();
-                
-                if(healths[top] < healths[id]){
-                    st.pop();
-                    healths[id]--;
-                }
-                else if(healths[top] > healths[id]){
-                    healths[top]--;
-                    healths[id] = 0;
-                }
-                else{
-                    st.pop();
-                    healths[id]=0;
-                }
-            } 
-            if(healths[id] > 0) st.push(id);
-        }
-    }
-        vector<pair<int, int>> survivors;
-        while(!st.empty()){
-            int id = st.top();
-            st.pop();
-            survivors.push_back({id, healths[id]});
-        }
+        sort(robot.begin(), robot.end(), greater<>());
 
-        sort(survivors.begin(), survivors.end());
-
+        vector<int> stack;
+        for(auto& [pos, i]: robot){
+            if(directions[i]=='L') stack.push_back(i);
+            else{
+                while(!stack.empty() && healths[i]>0){
+                    int j=stack.back();
+                    int x=healths[j]-healths[i];
+                    if(x>0) healths[j]--, healths[i]=0;
+                    else if(x<0) healths[j]=0, healths[i]--, stack.pop_back();
+                    else healths[i]=healths[j]=0, stack.pop_back();
+                    
+                }
+            }
+        }
         vector<int> ans;
-        for(auto &p : survivors){
-            ans.push_back(p.second);
-        }
+        for(auto x: healths) if(x>0) ans.push_back(x);
 
         return ans;
     }
