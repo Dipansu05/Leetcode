@@ -1,43 +1,19 @@
 class Solution {
 public:
     int maximumAmount(vector<vector<int>>& coins) {
-        int m = coins.size();
-        int n = coins[0].size();
+     int n = coins.size(), m = coins[0].size();
+     vector dp(n, vector(m, vector<int>(3, -1e9)));
+     dp[0][0][1] = dp[0][0][2] =0, dp[0][0][0] = coins[0][0];
 
-        vector<vector<vector<int>>> dp(m, vector<vector<int>>(n, vector<int>(3, INT_MIN)));
-
-        for(int k = 0; k<=2; k++){
-            if (coins[0][0] >= 0) dp[0][0][k] = coins[0][0];
-            else dp[0][0][k] = (k>0 ? 0 : coins[0][0]);
-        }
-
-        for(int i=0;i<m;i++){
-            for(int j=0;j<n;j++){
-                if(i==0 && j==0) continue;
-                for(int k=0; k<=2;k++){
-                    int best_prev = INT_MIN;
-                    if(i>0) best_prev=max(best_prev, dp[i-1][j][k]);
-                    if(j>0) best_prev=max(best_prev, dp[i][j-1][k]);
-
-                    int val = coins[i][j];
-
-                    if(val>=0){
-                        dp[i][j][k] = best_prev + val;
-                    }else{
-                        int no_neutral= best_prev+ val;
-                        int use_neutral = INT_MIN;
-                        if(k>0){
-                            int best_prev2 = INT_MIN;
-                            if(i>0) best_prev2 = max(best_prev2, dp[i-1][j][k-1]);
-                            if(j>0) best_prev2 = max(best_prev2, dp[i][j-1][k-1]);
-                            use_neutral = best_prev2+0;
-                        }
-                        dp[i][j][k] = max(no_neutral, use_neutral);
-                    }
-                }
+     for(int i=0;i<n;i++)
+        for(int j=0;j<m;j++)
+            for(int k=0;k<3;k++){
+                if(i) dp[i][j][k] = max(dp[i][j][k], dp[i-1][j][k]+coins[i][j]);
+                if(i && k) dp[i][j][k] = max(dp[i][j][k], dp[i-1][j][k-1]);
+                if(j) dp[i][j][k] = max(dp[i][j][k], dp[i][j-1][k] + coins[i][j]);
+                if(j && k) dp[i][j][k] = max(dp[i][j][k], dp[i][j-1][k-1]);
             }
-        }
 
-        return max({dp[m-1][n-1][0], dp[m-1][n-1][1], dp[m-1][n-1][2]});
+            return *max_element(dp[n-1][m-1].begin(), dp[n-1][m-1].end());
     }
 };
