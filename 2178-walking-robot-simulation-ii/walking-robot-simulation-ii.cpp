@@ -1,60 +1,50 @@
 class Robot {
 public:
-    int w=0, h=0;
-    int x=0, y=0;
-    int dir=0, per=0;
-    Robot(int width, int height) {
-        w=width;
-        h=height;
 
-        per = 2*(h+w)-4;
-    }
-    
-    void step(int num) {
-        if(per==0) return;
-        num %= per;
-        if(num==0 && x!=0 && y!=0) return;
-        if(num==0 && x==0 && y==0) {
-            dir=3;
-            return;
+    bool moved=false;
+    int idx=0;
+    vector<pair<int, int>> pos;
+    vector<int> dir;
+
+    unordered_map<int, string> to_dir={
+        {0,"East"},{1,"North"},{2,"West"},{3,"South"}
+        };
+
+    Robot(int width, int height) {
+        for(int i=0;i<width;i++){
+            pos.emplace_back(i,0);
+            dir.emplace_back(0);
         }
-        while(num>0){
-            if(dir==0){
-                int move=min(num,w-1-x);
-                x+=move;
-                num-=move;
-                if(num>0) dir=1;
-            }
-            else if(dir==1){
-                int move=min(num,h-1-y);
-                y+=move;
-                num-=move;
-                if(num>0) dir=2;
-            }
-            else if(dir==2){
-                int move=min(num,x);
-                x-=move;
-                num-=move;
-                if(num>0) dir=3;
-            }else{
-                int move=min(num,y);
-                y-=move;
-                num-=move;
-                if(num>0) dir=0;
-            }
+        for(int i=1;i<height;i++){
+            pos.emplace_back(width-1,i);
+            dir.emplace_back(1);
         }
+        for(int i=width-2;i>=0;i--){
+            pos.emplace_back(i, height-1);
+            dir.emplace_back(2);
+        }
+        for(int i=height-2;i>0;i--){
+            pos.emplace_back(0,i);
+            dir.emplace_back(3);
+        }
+        dir[0]=3;
+
         
     }
     
+    void step(int num) {
+        moved=true;
+        idx=(idx+num) % pos.size();
+    }
+    
     vector<int> getPos() {
-        return {x,y};
+        return {pos[idx].first, pos[idx].second};
     }
     
     string getDir() {
-        if(dir==0) return "East";
-        if(dir==1) return "North";
-        if(dir==2) return "West";
-        return "South";
+        if(!moved) return "East";
+
+        return to_dir[dir[idx]];
     }
 };
 
