@@ -1,77 +1,59 @@
 class Solution {
 public:
-    static const int MOD=1e9+7;
-    long long modpow(long long a, long long e){
-        long long r=1;
-        while(e){
-            if (e&1) r=r*a%MOD;
-            a=a*a%MOD;
-            e>>=1;
+    const int mod = 1e9+7;
+    using ll = long long;
+    int pow(ll x, ll y){
+        ll res = 1;
+        for(; y; y >>= 1){
+            if (y & 1){
+                res = res * x % mod;
+            }
+            x = x * x % mod;
         }
-        return r;
+        return res;
     }
     int xorAfterQueries(vector<int>& nums, vector<vector<int>>& queries) {
         int n = nums.size();
-        int B = sqrt(n)+1;
-
-        vector<vector<vector<pair<int,int>>>> events(B+1);
-        for(int k=1;k<=B;k++)
-            events[k].resize(k);
-
-        for(auto &q : queries){
-            int l=q[0], r=q[1], k=q[2], v=q[3];
-
-            if(k>B){
-                for(int i=l;i<=r;i+=k){
-                    nums[i]=(long long)nums[i]*v%MOD;
-                }
+        int T = sqrt(n);
+        vector<vector<vector<int>>> groups(T);
+        for(auto& q : queries){
+            int l = q[0], r = q[1], k = q[2], v = q[3];
+            if(k<T){
+                groups[k].push_back({l,r,v});
             }else{
-                int rem=l%k;
-                int start=(l-rem)/k;
-                int end=(r-rem)/k;
-
-                events[k][rem].push_back({start,v});
-
-                int maxT=(n-1-rem)/k;
-                if(end+1<=maxT){
-                    int inv=modpow(v,MOD-2);
-                    events[k][rem].push_back({end+1,inv});
+                for(int i=l;i<=r;i+=k){
+                    nums[i]=1ll*nums[i]*v%mod;
                 }
             }
         }
 
-        for(int k=1;k<=B;k++){
-            for(int rem=0;rem<k;rem++){
-                auto &ev=events[k][rem];
-                if(ev.empty()) continue;
-
-                sort(ev.begin(), ev.end());
-
-                vector<pair<int,int>> comp;
-                for(auto &p : ev){
-                    if(!comp.empty() && comp.back().first==p.first){
-                        comp.back().second=(long long)comp.back().second*p.second%MOD;
-                }else{
-                    comp.push_back(p);
-                }
+        vector<ll> diff(n+T);
+        for(int k=1;k<T;k++){
+            if(groups[k].empty()){
+                continue;
+            }
+            fill(diff.begin(), diff.end(), 1);
+            for(auto& q : groups[k]){
+                int l=q[0], r = q[1], v=q[2];
+                diff[l] = diff[l]*v%mod;
+                int R=((r-l)/k+1) * k+l;
+                diff[R]=diff[R]*pow(v, mod-2)% mod;
             }
 
-            long long cur=1;
-            int ptr=0;
-
-            for(int t=0,idx=rem;idx<n;t++,idx+=k){
-                while(ptr<comp.size() && comp[ptr].first==t){
-                    cur=cur*comp[ptr].second%MOD;
-                    ptr++;
-                }
-                nums[idx]=nums[idx]*cur%MOD;
+            for(int i=k;i<n;i++){
+                diff[i]=diff[i]*diff[i-k]%mod;
             }
+            for(int i=0;i<n;i++){
+                nums[i]=1ll*nums[i]*diff[i]%mod;
+            }
+            
         }
+        
+        int res=0;
+        for(int i=0;i<n;i++){
+             res=res^nums[i];
         }
 
-        int ans{0};
-        for(int x: nums) ans^=x;
-
-        return ans;
+            return res;
     }
 };
