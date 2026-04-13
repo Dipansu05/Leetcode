@@ -1,28 +1,37 @@
 class Solution {
 public:
-    int dp[301][27][27];
     int dist(int a, int b){
         if(a==26 || b==26) return 0;
-        int r1=a/6, c1=a%6;
-        int r2=b/6, c2=b%6;
-
-        return abs(r1-r2) + abs(c1-c2);
-    }
-
-    int solve(int i, int f1, int f2, string& word){
-        if(i==word.size()) return 0;
-
-        if(dp[i][f1][f2]!=-1) return dp[i][f1][f2];
-
-        int cur=word[i]-'A';
-
-        int move1=dist(f1, cur) + solve(i+1, cur, f2, word);
-        int move2=dist(f2, cur) + solve(i+1, f1, cur, word);
-
-        return dp[i][f1][f2]=min(move1, move2);
+        return abs(a/6-b/6) + abs(a%6-b%6);
     }
     int minimumDistance(string word) {
-        memset(dp, -1, sizeof(dp));
-        return solve(0,26,26, word);
+        int n = word.size();
+        const int INF=1e9;
+
+        vector dp(n+1, vector(27, vector<int>(27, INF)));
+
+        dp[0][26][26]=0;
+
+        for(int i=0;i<n;i++){
+            int cur=word[i]-'A';
+
+                for(int f1=0;f1<=26;f1++){
+                    for(int f2=0; f2<=26;f2++){
+                        int val=dp[i][f1][f2];
+                        if(val==INF) continue;
+
+                        dp[i+1][cur][f2]=min(dp[i+1][cur][f2], val + dist(f1, cur));
+                        dp[i+1][f1][cur]=min(dp[i+1][f1][cur], val + dist(f2, cur));
+                    }
+                }
+            }
+
+            int ans=INF;
+            for(int i=0;i<=26;i++)
+                for(int j=0;j<=26;j++)
+                    ans=min(ans, dp[n][i][j]);
+
+            return ans;
+         
     }
 };
