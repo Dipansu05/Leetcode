@@ -1,35 +1,40 @@
 class Solution {
 public:
     vector<int> solveQueries(vector<int>& nums, vector<int>& queries) {
-        int n=nums.size();
-        unordered_map<int, vector<int>> mp;
+        int n = nums.size();
 
-        for(int i=0; i<n; i++){
-            mp[nums[i]].push_back(i);
-        }
+        unordered_map<int, vector<int>> positions;
 
-        vector<int> ans;
+        for(int i=0;i<n;i++) positions[nums[i]].push_back(i);
 
-        for(int q: queries){
-            vector<int>& v = mp[nums[q]];
+        vector<int> answer(n, -1);
 
-            if(v.size()==1){
-                ans.push_back(-1);
-                continue;
+        for(auto& entry : positions){
+            vector<int>& pos = entry.second;
+            int m = pos.size();
+
+            if(m==1) continue;
+
+            for(int i=0;i<m;i++){
+                int curr = pos[i];
+
+                int prev=pos[(i-1+m)%m];
+                int next=pos[(i+1)%m];
+
+                int distPrev=abs(curr-prev);
+                distPrev=min(distPrev, n-distPrev);
+
+                int distNext=abs(curr-next);
+                distNext=min(distNext,n-distNext);
+
+                answer[curr]=min(distPrev,distNext);
             }
-
-            int pos = lower_bound(begin(v), end(v), q)-v.begin();
-            int res=INT_MAX;
-
-            int left=v[(pos-1+v.size()) % v.size()];
-            int d1=abs(q-left);
-            res = min(res, min(d1, n-d1));
-
-            int right = v[(pos+1)%v.size()];
-            int d2=abs(q-right);
-            res=min(res, min(d2, n-d2));
-            ans.push_back(res);
         }
-        return ans;
+
+        vector<int> result;
+        for(int idx : queries){
+            result.push_back(answer[idx]);
+        }
+        return result;
     }
 };
