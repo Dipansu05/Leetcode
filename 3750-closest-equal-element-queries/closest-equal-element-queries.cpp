@@ -1,13 +1,14 @@
 class Solution {
 public:
     vector<int> solveQueries(vector<int>& nums, vector<int>& queries) {
-        int n = nums.size();
-
+        int n=nums.size();
         unordered_map<int, vector<int>> positions;
 
-        for(int i=0;i<n;i++) positions[nums[i]].push_back(i);
+        for(int i=0;i<n;i++){
+            positions[nums[i]].push_back(i);
+        }
 
-        vector<int> answer(n, -1);
+        vector<int> answer(n,-1);
 
         for(auto& entry : positions){
             vector<int>& pos = entry.second;
@@ -24,10 +25,9 @@ public:
                 int distPrev=abs(curr-prev);
                 distPrev=min(distPrev, n-distPrev);
 
-                int distNext=abs(curr-next);
-                distNext=min(distNext,n-distNext);
-
-                answer[curr]=min(distPrev,distNext);
+                int distNext = abs(curr-next);
+                distNext=min(distNext, n-distNext);
+                answer[curr]=min(distPrev, distNext);
             }
         }
 
