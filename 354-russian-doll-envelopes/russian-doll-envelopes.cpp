@@ -1,26 +1,23 @@
 class Solution {
 public:
-    int maxEnvelopes(vector<vector<int>>& envelopes) {
-        sort(envelopes.begin(), envelopes.end(), [](vector<int>& a, vector<int>& b){
-            if(a[0]==b[0]){
-                return a[1]>b[1];
-            }
-            return a[0]<b[0];
-        });
+    static bool cmp(vector<int>& a, vector<int>& b){
+        if(a[0]==b[0]) return a[1] > b[1];
+        return a[0] < b[0];
+    }
+    int maxEnvelopes(vector<vector<int>>& env) {
+        int n = env.size();
+        sort(env.begin(), env.end(), cmp);
+        vector<int> lis;
 
-        int n=envelopes.size();
-        if(n==0) return 0;
-        vector<int> tails;
-        for(auto e: envelopes){
-            int ht=e[1];
-            auto it = lower_bound(tails.begin(), tails.end(), ht);
-            if(it==tails.end())
-            {
-                tails.push_back(ht);
-            }else{
-                *it=ht;
-            }
+        for(int i=0;i<env.size();i++){
+            int ele = env[i][1];
+
+            int idx=lower_bound(lis.begin(), lis.end(), ele) - lis.begin();
+
+            if(idx >= lis.size()) lis.push_back(ele);
+            else lis[idx] = ele;
         }
-        return tails.size();
+
+        return lis.size();
     }
 };
