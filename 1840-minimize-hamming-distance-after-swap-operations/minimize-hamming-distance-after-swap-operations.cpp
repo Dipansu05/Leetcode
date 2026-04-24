@@ -1,46 +1,54 @@
 class Solution {
 public:
-    vector<int> parent, rankv;
+class DSU{
+public :
+    vector<int> parent;
+    DSU(int n){
+        parent.resize(n);
+        for(int i=0;i<n;i++) parent[i]=i;
+    }
+
     int find(int x){
-        if(parent[x]==x) return x;
-        return parent[x]=find(parent[x]);
+        if(parent[x] != x)
+            parent[x] = find(parent[x]);
+        return parent[x];
     }
 
-    void unite(int a, int b){
-        a=find(a);
-        b=find(b);
-        if(a==b) return;
-
-        if(rankv[a]<rankv[b]) swap(a,b);
-        parent[b]=a;
-        if(rankv[a]==rankv[b]) rankv[a]++;
+    void unite(int x, int y){
+        int px=find(x);
+        int py=find(y);
+        if(px != py) parent[px] = py;
     }
+};
     int minimumHammingDistance(vector<int>& source, vector<int>& target, vector<vector<int>>& allowedSwaps) {
         int n = source.size();
-        parent.resize(n);
-        rankv.resize(n,0);
+        DSU dsu(n);
 
-        for(int i=0;i<n;i++) parent[i]=i;
-
-        for(auto &e : allowedSwaps) unite(e[0], e[1]);
+        for(auto &swap : allowedSwaps) dsu.unite(swap[0], swap[1]);
 
         unordered_map<int, vector<int>> groups;
-        for(int i=0;i<n;i++) groups[find(i)].push_back(i);
+        for(int i=0;i<n;i++){
+            int p = dsu.find(i);
+            groups[p].push_back(i);
+        }
 
-        int ans{0};
+        int distance{0};
 
-        for(auto &[p, idxs] : groups){
+        for(auto& it : groups){
+            auto &indices=it.second;
             unordered_map<int, int> freq;
 
-            for(int i : idxs) freq[source[i]]++;
+            for(int idx : indices) freq[source[idx]]++;
 
-            for(int i : idxs){
-                if(freq[target[i]] > 0)
-                    freq[target[i]]--;
-                else
-                    ans++;
+            for(int idx : indices){
+                if(freq[target[idx]]>0){
+                    freq[target[idx]]--;
+                }else{
+                    distance++;
+                }
             }
-        } 
-        return ans;
+        }
+        return distance;
+        
     }
 };
