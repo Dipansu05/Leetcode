@@ -1,42 +1,48 @@
 class Solution {
 public:
     int maxPathScore(vector<vector<int>>& grid, int k) {
-     int  m=grid.size(),n=grid[0].size();
-     vector<vector<vector<int>>> dp(
-        m, vector<vector<int>>(n, vector<int>(k+1,-1))
-     );
+        int m=grid.size();
+        int n=grid[0].size();
+        const int NEG=-1e9;
 
-     dp[0][0][0]=0;
-     for(int i=0;i<m;i++){
-        for(int j=0;j<n;j++){
+        vector<vector<int>> prev(n,vector<int>(k+1,NEG));
+        for(int i=0;i<m;i++){
+            vector<vector<int>> curr(n, vector<int>(k+1,NEG));
 
-            for(int c=0;c<=k;c++){
-                if(dp[i][j][c]==-1) continue;
+            for(int j=0;j<n;j++){
+                int gain=grid[i][j];
+                int need=(gain>0?1:0);
 
-                if(i+1<m){
-                    int val=grid[i+1][j];
-                    int cost=(val==0? 0 : 1);
-                    int nc=c+cost;
-                    if(nc<=k){
-                        dp[i+1][j][nc]= max(dp[i+1][j][nc], dp[i][j][c]+val);
-                    }
+                int limit=min(k,i+j);
+
+                if(i==0 && j==0){
+                    curr[0][0]=0;
+                    continue;
                 }
 
-                if(j+1<n){
-                    int val=grid[i][j+1];
-                    int cost=(val==0? 0 : 1);
-                    int nc=c+cost;
-                    if(nc<=k){
-                        dp[i][j+1][nc]=max(dp[i][j+1][nc], dp[i][j][c]+val);
+                for(int c=need;c<=limit;c++){
+                    int best=NEG;
+
+                    if(i>0 && prev[j][c-need] != NEG){
+                        best=max(best, prev[j][c-need]+gain);
                     }
+
+                    if(j>0 && curr[j-1][c-need]!=NEG){
+                        best=max(best, curr[j-1][c-need]+gain);
+                    }
+
+                    curr[j][c]=best;
                 }
             }
+
+            prev.swap(curr);
         }
-     }
-        int ans{-1};
+
+        int ans=NEG;
         for(int c=0;c<=k;c++){
-            ans=max(ans,dp[m-1][n-1][c]);
+            ans=max(ans,prev[n-1][c]);
         }
-        return ans;
+
+        return ans<0?-1:ans;
     }
 };
