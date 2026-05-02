@@ -1,30 +1,23 @@
 class Solution {
 public:
+    void bfs(unordered_map<int, vector<int>> &adj, int u, vector<bool> &vis, vector<vector<int>>& isConnected){
+        queue<int> q;
+        q.push(u);
+        vis[u]=true;
 
-
-
-
-
-
-
-
-
-    void bfs(unordered_map<int, vector<int>>& adj, int u, vector<bool>& visited){
-        queue<int> que;
-        que.push(u);
-        visited[u]=true;
-        while(!que.empty()){
-            int curr=que.front();
-            que.pop();
+        while(!q.empty()){
+            int curr=q.front();
+            q.pop();
 
             for(int &v : adj[curr]){
-                if(!visited[v]) bfs(adj, v,visited);
+                if(!vis[v]) bfs(adj, v, vis, isConnected);
             }
         }
     }
     int findCircleNum(vector<vector<int>>& isConnected) {
-        int n=isConnected.size();
         unordered_map<int, vector<int>> adj;
+        int n=isConnected.size();
+        vector<bool> vis(n, false);
 
         for(int i=0;i<n;i++){
             for(int j=0;j<n;j++){
@@ -34,15 +27,14 @@ public:
                 }
             }
         }
-        vector<bool> visited(n, false);
+
         int count{0};
         for(int i=0;i<n;i++){
-            if(!visited[i]){
-                bfs(adj,i,visited);
+            if(!vis[i]){
+                bfs(adj,i,vis,isConnected);
                 count++;
             }
         }
-
         return count;
     }
 };
