@@ -1,40 +1,46 @@
 class Solution {
 public:
-    void bfs(unordered_map<int, vector<int>> &adj, int u, vector<bool> &vis, vector<vector<int>>& isConnected){
-        queue<int> q;
-        q.push(u);
-        vis[u]=true;
+    vector<int> parent;
+    vector<int> rank;
 
-        while(!q.empty()){
-            int curr=q.front();
-            q.pop();
-
-            for(int &v : adj[curr]){
-                if(!vis[v]) bfs(adj, v, vis, isConnected);
-            }
-        }
+    int find(int x){
+        if(parent[x]!=x) parent[x]=find(parent[x]);
+        return parent[x];
     }
+
+  void unite(int x, int y){
+    int px=find(x);
+    int py=find(y);
+
+    if(px==py) return;
+
+    if(rank[px]>rank[py]){
+        parent[py]=px;
+    }else if(rank[px]<rank[py]){
+        parent[px]=py;
+    }else{
+        parent[py]=px;
+        rank[px]++;
+    }
+}
     int findCircleNum(vector<vector<int>>& isConnected) {
-        unordered_map<int, vector<int>> adj;
         int n=isConnected.size();
-        vector<bool> vis(n, false);
+        parent.resize(n);
+        rank.resize(n,0);
 
-        for(int i=0;i<n;i++){
-            for(int j=0;j<n;j++){
-                if(isConnected[i][j]==1){
-                    adj[i].push_back(j);
-                    adj[j].push_back(i);
-                }
+        for(int i=0;i<n;i++) parent[i]=i;
+
+        for(int i=0; i<n;i++){
+            for(int j=i+1;j<n;j++){
+                if(isConnected[i][j]==1) unite(i,j);
             }
         }
 
-        int count{0};
+        int prov{0};
         for(int i=0;i<n;i++){
-            if(!vis[i]){
-                bfs(adj,i,vis,isConnected);
-                count++;
-            }
+            if(parent[i]==i) prov++;
         }
-        return count;
+
+        return prov;
     }
 };
