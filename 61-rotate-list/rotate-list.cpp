@@ -14,22 +14,23 @@ public:
         if(head==NULL) return head;
         vector<int> nums;
         ListNode* temp=head;
-        while(temp!=NULL){
+        while(temp!=nullptr){
             nums.push_back(temp->val);
             temp=temp->next;
         }
-
-        k = k % nums.size();
-        reverse(nums.begin(), nums.end());
-        reverse(nums.begin(), nums.begin()+k);
-        reverse(nums.begin()+k, nums.end());
+        k=k%nums.size();
+        if(k==0) return head;
+        k=nums.size()-k;
+        int count{0};
 
         temp=head;
-        for(int i=0;i<nums.size();i++){
-            temp->val=nums[i];
+        while(count<nums.size()){
+            temp->val=nums[k];
+            k++;
+            k=k%nums.size();
+            count++;
             temp=temp->next;
         }
-
         return head;
     }
 };
