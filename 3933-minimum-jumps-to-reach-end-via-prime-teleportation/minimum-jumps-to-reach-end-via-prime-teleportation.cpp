@@ -1,81 +1,70 @@
 class Solution {
 public:
+    vector<bool> isPrime;
+    void buildSieve(int maxEl){
+        isPrime.resize(maxEl+1, true);
+        isPrime[0]=isPrime[1]=false;
+
+        for(int num=2;num*num<=maxEl;num++){
+            if(isPrime[num]){
+                for(int j=num*num;j<=maxEl;j+=num){
+                    isPrime[j]=false;
+                }
+            }
+        }
+
+    }
     int minJumps(vector<int>& nums) {
         int n=nums.size();
-        if(n==1) return 0;
-        int mx=*max_element(nums.begin(), nums.end());
-        vector<int> spf(mx+1);
-
-        for(int i=0;i<=mx;i++){
-            spf[i]=i;
-        }
-
-        for(int i=2;i*i<=mx;i++){
-            if(spf[i]==i){
-                for(int j=i*i;j<=mx;j+=i){
-                    if(spf[j]==j) spf[j]=i;
-                }
-            }
-        }
         unordered_map<int, vector<int>> mp;
-
+        int maxEl{0};
         for(int i=0;i<n;i++){
-            int x=nums[i];
-
-            unordered_set<int> used;
-            while(x>1){
-                int p=spf[x];
-
-                if(!used.count(p)){
-                    mp[p].push_back(i);
-                    used.insert(p);
-                }
-
-                x/=p;
-            }
+            mp[nums[i]].push_back(i);
+            maxEl=max(maxEl, nums[i]);
         }
 
-        queue<int> q;
-        vector<int> dist(n,-1);
-        q.push(0);
-        dist[0]=0;
+        buildSieve(maxEl);
 
-        while(!q.empty()){
-            int i=q.front();
-            q.pop();
+        queue<int> que;
+        vector<bool> visited(n, false);
+        que.push(0);
+        visited[0]=true;
 
-            int steps=dist[i];
-            if(i==n-1) return steps;
+        unordered_set<int> seen;
+        int steps{0};
 
-            if(i-1>=0 && dist[i-1]==-1){
-                dist[i-1]=steps+1;
-                q.push(i-1);
-            }
+        while(!que.empty()){
+            int size=que.size();
+            while(size--){
+                int i=que.front();
+                que.pop();
+                if(i==n-1) return steps;
+                if(i-1>=0 && !visited[i-1]){
+                    que.push(i-1);
+                    visited[i-1]=true;
+                }
+                if(i+1>=0 && !visited[i+1]){
+                    que.push(i+1);
+                    visited[i+1]=true;
+                }
+                if(!isPrime[nums[i]] || seen.count(nums[i])) continue;
 
-            if(i-1>=0 && dist[i-1]==-1){
-                dist[i-1]=steps+1;
-                q.push(i-1);
-            }
+                for(int multi=nums[i]; multi<=maxEl; multi+=nums[i]){
+                    if(!mp.contains(multi)) continue;
+                
 
-            if(i+1<n && dist[i+1]==-1){
-                dist[i+1]=steps+1;
-                q.push(i+1);
-            }
-
-            int val=nums[i];
-
-            if(val > 1 && spf[val]==val){
-                for(int nxt : mp[val]){
-                    if(dist[nxt]==-1){
-                        dist[nxt]=steps+1;
-                        q.push(nxt);
+                for(int &j : mp[multi]){
+                    if(!visited[j]){
+                        que.push(j);
+                        visited[j]=true;
                     }
                 }
-
-                mp[val].clear();
+                }
+                seen.insert(nums[i]);
             }
+            steps++;
         }
+        return steps;
 
-        return -1;
     }
 };
