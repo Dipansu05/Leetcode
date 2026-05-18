@@ -1,41 +1,41 @@
 class Solution {
 public:
     int minJumps(vector<int>& arr) {
-                int n=arr.size();
-        unordered_map<int,vector<int>> m;
+        int n=arr.size();
+        unordered_map<int, vector<int>> mp;
         for(int i=0;i<n;i++){
-            m[arr[i]].push_back(i);
-            
+            mp[arr[i]].push_back(i);
         }
         queue<int> q;
-        vector<bool> v(n);
-        v[0]=true;
-        int ans=0;
+        vector<bool> vis(n, false);
         q.push(0);
-        while(!q.empty()){
-            int s=q.size();
-            while(s--){
-                int i=q.front();
+        vis[0]=true;
+        int ans{0};
+
+        for(;!q.empty();ans++){
+            int sz=q.size();
+            for(int i=0;i<sz;i++){
+                int index=q.front();
                 q.pop();
-                if(i==n-1) return ans;
-                if(i+1<n and !v[i+1]){
-                q.push(i+1);
-                v[i+1]=true;
-                }
-                if(i-1>=0 and !v[i-1]){
-                q.push(i-1);
-                v[i-1]=true;
-                }
-                for(int j:m[arr[i]]){
-                if(!v[j]){
-                    q.push(j);
-                    v[j]=true;
+                if(index==n-1) return ans;
+
+                for(int neigh: {index-1, index+1}){
+                    if(neigh>=0 && neigh<n && !vis[neigh]){
+                        vis[neigh]=true;
+                        q.push(neigh);
+                    }
+                    if(auto it=mp.find(arr[index]); it!=mp.end() && !it->second.empty()){
+                        for(const int neigh: it->second){
+                            if(!vis[neigh]){
+                                vis[neigh]=true;
+                                q.push(neigh);
+                            }
+                        }
+                        it->second.clear();
+                    }
                 }
             }
-            m[arr[i]].clear();
-            }
-         ans++;   
         }
-        return -1;
+        return ans;
     }
 };
