@@ -1,32 +1,39 @@
 class Solution {
 public:
+    vector<vector<int>> directions{{1,1}, {0,1}, {1,0}, {-1,0}, {0,-1},{-1,-1},{1,-1},{-1,1}};
     int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
         int m=grid.size();
         int n=grid[0].size();
-        vector<vector<int>> vis(m, vector<int>(n,0));
-        queue<pair<pair<int, int>,int>> q;
-        if(grid[0][0]==1) return -1;
-        q.push({{0,0},1});
-        vis[0][0]=1;
-        int delrow[]={-1,+1,0,0,-1,+1,-1,+1};
-        int delcol[]={0,0,-1,+1,-1,+1,+1,-1};
+        if(grid[0][0]!=0) return -1;
+        auto isSafe=[&](int x, int y){
+            return x>=0 && x<m && y>=0 && y<n;
+        };
 
-        while(!q.empty()){
-            auto it=q.front();
-            q.pop();
-            int row=it.first.first;
-            int col=it.first.second;
-            int dist=it.second;
-            if(row==m-1 && col==n-1) return dist;
-            for(int i=0;i<8;i++){
-                int nrow=row+delrow[i];
-                int ncol=col+delcol[i];
-                if(nrow>=0 && nrow<m && ncol>=0 && ncol<n && grid[nrow][ncol]==0 && !vis[nrow][ncol]){
-                    grid[nrow][ncol]=1;
-                    vis[nrow][ncol]=1;
-                    q.push({{nrow,ncol},dist+1});
+        queue<pair<int, int>> que;
+        que.push({0,0});
+        grid[0][0]=1;
+
+        int level{0};
+
+        while(!que.empty()){
+            int N=que.size();
+            while(N--){
+                auto curr = que.front();
+                que.pop();
+                int x=curr.first;
+                int y=curr.second;
+                if(x==m-1 && y==n-1) return level+1;
+
+                for(auto dir : directions){
+                    int x_ = x+ dir[0];
+                    int y_ = y+ dir[1];
+                    if(isSafe(x_, y_) && grid[x_][y_]==0){
+                        que.push({x_,y_});
+                        grid[x_][y_]=1;
+                    }
                 }
             }
+            level++;
         }
         return -1;
     }
