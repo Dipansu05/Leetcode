@@ -1,44 +1,43 @@
 class Solution {
 public:
-    typedef pair<int, pair<int, int>> P;
-    vector<vector<int>> dirs={{-1,0},{1,0},{0,-1},{0,1}};
     int minimumEffortPath(vector<vector<int>>& heights) {
         int m = heights.size();
         int n = heights[0].size();
 
-        vector<vector<int>> result(m, vector<int>(n, INT_MAX));
-        priority_queue<P, vector<P>, greater<P>> pq;
+        vector<vector<int>> distance(m, vector<int>(n, INT_MAX));
+        distance[0][0]=0;
 
-        result[0][0]=0;
-        pq.push({0, {0,0}});
+        priority_queue<
+        pair<int, pair<int, int>>,
+        vector<pair<int, pair<int, int>>>,
+        greater<pair<int, pair<int, int>>>> p;
+        
+        p.push({0, {0,0}});
 
-        auto isSafe = [&](int x, int y){
-            return x>=0 && x<m && y>=0 && y<n;
-        } ;
+        while(!p.empty()){
+            int diff=p.top().first;
+            int row=p.top().second.first;
+            int col=p.top().second.second;
+            p.pop();
 
-        while(!pq.empty()){
-            int diff=pq.top().first;
-            auto coord=pq.top().second;
-            int x=coord.first;
-            int y=coord.second;
-            pq.pop();
+            int r[]={0,-1,0,1};
+            int c[]={-1,0,1,0};
 
-            for(auto &dir: dirs){
-                int x_ = x+ dir[0];
-                int y_ = y+ dir[1];
+            for(int i=0;i<4;i++){
+                int nrow=row+r[i];
+                int ncol=col+c[i];
 
-                if(isSafe(x_, y_)){
-                    int absDiff= abs(heights[x][y]-heights[x_][y_]);
-                    int maxDiff=max(diff, absDiff);
-                    if(result[x_][y_]>maxDiff){
-                        result[x_][y_]=maxDiff;
-                        pq.push({maxDiff, {x_, y_}});
+                if(nrow>=0 && nrow <m && ncol>=0 && ncol<n){
+                    int newEffort=max(diff,
+                    abs(heights[nrow][ncol]-heights[row][col]));
+                    if(newEffort < distance[nrow][ncol]){
+                        distance[nrow][ncol]=newEffort;
+                        p.push({newEffort, {nrow,ncol}});
                     }
                 }
             }
+
         }
-
-        return result[m-1][n-1];
-
+        return distance[m-1][n-1];
     }
 };
