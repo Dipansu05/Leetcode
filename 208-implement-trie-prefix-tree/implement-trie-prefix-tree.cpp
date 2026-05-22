@@ -6,26 +6,27 @@ public:
     };
 
     trieNode* getNode(){
-        trieNode* newNode =new trieNode();
+        trieNode* newNode = new trieNode();
         newNode->endOfWord=false;
         for(int i=0;i<26;i++){
-            newNode->children[i]=NULL;
+            newNode->children[i]=nullptr;
         }
         return newNode;
     }
+
     trieNode* root;
+
     Trie() {
         root = getNode();
     }
     
     void insert(string word) {
         trieNode* crawler = root;
-
-        for(int i=0;i<word.length();i++){
+        for(int i=0;i<word.size();i++){
             char ch=word[i];
             int idx=ch-'a';
-            if(crawler->children[idx]==NULL){
-                crawler->children[idx] = getNode();
+            if(crawler->children[idx]==nullptr){
+                crawler->children[idx]=getNode();
             }
             crawler=crawler->children[idx];
         }
@@ -34,31 +35,33 @@ public:
     
     bool search(string word) {
         trieNode* crawler = root;
-
-        for(int i=0;i<word.length();i++){
+        for(int i=0;i<word.size();i++){
             char ch=word[i];
             int idx=ch-'a';
-            if(crawler->children[idx]==NULL){
+            if(crawler->children[idx]==nullptr){
+                //crawler->children[idx]=getNode();
                 return false;
             }
             crawler=crawler->children[idx];
         }
-        if (crawler != nullptr && crawler->endOfWord==true) return true;
+        if(crawler!=NULL && crawler->endOfWord==true) return true;
         return false;
+        
     }
     
     bool startsWith(string prefix) {
         trieNode* crawler = root;
         int i{0};
-        for(;i<prefix.length();i++){
+        for(;i<prefix.size();i++){
             char ch=prefix[i];
             int idx=ch-'a';
-            if(crawler->children[idx]==NULL){
+            if(crawler->children[idx]==nullptr){
+                //crawler->children[idx]=getNode();
                 return false;
             }
             crawler=crawler->children[idx];
         }
-        if(i==prefix.length()) return true;
+        if(i==prefix.size() )return true;
         return false;
     }
 };
