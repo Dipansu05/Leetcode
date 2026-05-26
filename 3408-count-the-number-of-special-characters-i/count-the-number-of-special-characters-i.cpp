@@ -1,16 +1,12 @@
 class Solution {
 public:
-    int numberOfSpecialChars(string w) {
-        int x{0};
-        set<char> a,b;
-        for(char c:w){
-            islower(c) ? a.insert(c) : b.insert(c+32);
+    int numberOfSpecialChars(string word) {
+        bitset<26> a=0, A=0;
+        for(char c: word){
+            if(c>='a') a[c-'a']=1;
+            else A[c-'A']=1;
         }
-
-        for(char c:a){
-            x+=b.count(c);
-        }
-
-        return x;
+        a=a&A;
+        return a.count();
     }
 };
