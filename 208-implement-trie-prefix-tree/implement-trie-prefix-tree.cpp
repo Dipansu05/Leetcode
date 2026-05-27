@@ -7,10 +7,10 @@ public:
 
     trieNode* getNode(){
         trieNode* newNode = new trieNode();
-        newNode->endOfWord=false;
         for(int i=0;i<26;i++){
-            newNode->children[i]=nullptr;
+            newNode -> children[i] = nullptr;
         }
+        newNode -> endOfWord=false;
         return newNode;
     }
 
@@ -21,47 +21,46 @@ public:
     }
     
     void insert(string word) {
-        trieNode* crawler = root;
+        trieNode* pCrawl = root;
         for(int i=0;i<word.size();i++){
-            char ch=word[i];
-            int idx=ch-'a';
-            if(crawler->children[idx]==nullptr){
-                crawler->children[idx]=getNode();
+            char ch = word[i];
+            int idx = ch-'a';
+            if(pCrawl->children[idx]==nullptr){
+                pCrawl->children[idx]=getNode();
             }
-            crawler=crawler->children[idx];
+            pCrawl=pCrawl->children[idx];
         }
-        crawler->endOfWord=true;
+        pCrawl -> endOfWord = true;
     }
     
     bool search(string word) {
-        trieNode* crawler = root;
+        trieNode* pCrawl = root;
         for(int i=0;i<word.size();i++){
-            char ch=word[i];
-            int idx=ch-'a';
-            if(crawler->children[idx]==nullptr){
-                //crawler->children[idx]=getNode();
+            char ch = word[i];
+            int idx = ch-'a';
+            if(pCrawl->children[idx]==nullptr){
+                //pCrawl->children[idx]=getNode();
                 return false;
             }
-            crawler=crawler->children[idx];
+            pCrawl=pCrawl->children[idx];
         }
-        if(crawler!=NULL && crawler->endOfWord==true) return true;
+        if(pCrawl!=nullptr && pCrawl -> endOfWord == true) return true;
         return false;
-        
     }
     
     bool startsWith(string prefix) {
-        trieNode* crawler = root;
+        trieNode* pCrawl = root;
         int i{0};
         for(;i<prefix.size();i++){
-            char ch=prefix[i];
-            int idx=ch-'a';
-            if(crawler->children[idx]==nullptr){
-                //crawler->children[idx]=getNode();
-                return false;
+            char ch = prefix[i];
+            int idx = ch-'a';
+            if(pCrawl->children[idx]==nullptr){
+               // pCrawl->children[idx]=getNode();
+               return false;
             }
-            crawler=crawler->children[idx];
+            pCrawl=pCrawl->children[idx];
         }
-        if(i==prefix.size() )return true;
+        if(i==prefix.size()) return true;
         return false;
     }
 };
