@@ -3,19 +3,22 @@ public:
     int numberOfSpecialChars(string word) {
         vector<int> firstUpper(26, -1);
         vector<int> lastLower(26, -1);
+        int count{0};
 
         for(int i=0;i<word.size();i++){
-            char c = word[i];
-            if(islower(c)) lastLower[c-'a']=i;
-            else if(isupper(c)){
-                int idx=c-'A';
-                if(firstUpper[idx]==-1) firstUpper[idx]=i;
+            char ch=word[i];
+            if(islower(ch)) lastLower[ch-'a']=i;
+            else if(isupper(ch)){
+                if(firstUpper[ch-'A']==-1) firstUpper[ch-'A']=i;
             }
         }
-        int count{0};
+
         for(int i=0;i<26;i++){
-            if(lastLower[i] != -1 && firstUpper[i] !=-1 && lastLower[i]<firstUpper[i]) count ++;
+            if(lastLower[i] != -1 && firstUpper[i] != -1 && lastLower[i] < firstUpper[i]){
+                count ++;
+            }
         }
+
         return count;
     }
 };
