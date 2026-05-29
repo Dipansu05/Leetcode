@@ -6,41 +6,37 @@ public:
 
     trieNode* getNode(){
         trieNode* newNode = new trieNode();
-
         for(int i=0;i<10;i++){
-            newNode->children[i] = nullptr;
+            newNode -> children[i] = nullptr;
         }
-
         return newNode;
-
     }
-
     void insert(int num, trieNode* root){
         trieNode* crawl = root;
         string numStr = to_string(num);
 
-        for(char ch: numStr){
-            int idx = ch - '0';
-            if(!crawl -> children[idx]){
-                crawl -> children[idx] = getNode();
+        for( char ch: numStr){
+            int idx= ch-'0';
+            if(!crawl->children[idx]){
+                crawl->children[idx]=getNode();
             }
             crawl = crawl -> children[idx];
         }
     }
-
-    int search (int num, trieNode* root){
+    int search(int num, trieNode* root){
         trieNode* crawl = root;
-        string numStr = to_string(num);
         int length{0};
+        string numStr = to_string(num);
 
-        for(char ch: numStr){
-            int idx = ch-'0';
-            if(crawl -> children[idx]){
+        for( char ch: numStr){
+            int idx= ch-'0';
+            if(crawl->children[idx]){
+                //crawl->children[idx]=getNode();
                 length++;
-                crawl = crawl -> children[idx];
             }else{
                 break;
             }
+            crawl = crawl -> children[idx];
         }
         return length;
     }
@@ -48,16 +44,14 @@ public:
 
         trieNode* root = getNode();
 
+        int ans{0};
         for(int num: arr1){
             insert(num, root);
         }
-
-        int result{0};
         for(int num: arr2){
-            result = max(result, search(num, root));
+            ans = max(ans, search(num, root));
         }
 
-        return result;
-        
+        return ans;
     }
 };
