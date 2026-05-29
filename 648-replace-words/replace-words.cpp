@@ -8,7 +8,7 @@ public:
     trieNode* getNode(){
         trieNode* newNode = new trieNode();
         for(int i=0;i<26;i++){
-            newNode -> children[i] = NULL;
+            newNode->children[i] = nullptr;
         }
         newNode -> isEnd = false;
         return newNode;
@@ -17,44 +17,45 @@ public:
     trieNode* root;
 
     void insert(string &word){
-        trieNode* crawler = root;
+        trieNode* crawl = root;
         for(int i=0;i<word.size();i++){
             int idx = word[i] - 'a';
-            if(crawler->children[idx]==NULL){
-                crawler->children[idx] = getNode();
+            if(crawl->children[idx]==nullptr){
+                crawl->children[idx]=getNode();
             }
-            crawler = crawler ->children[idx];
+            crawl=crawl->children[idx];
         }
-        crawler -> isEnd = true;
+        crawl -> isEnd = true;
     }
 
-    string search(string &word){
-        trieNode* crawler = root;
+    string search(string word){
+        trieNode* crawl = root;
         for(int i=0;i<word.size();i++){
             int idx = word[i] - 'a';
-            if(crawler->children[idx]==NULL){
-                //root->children[idx] = getNode();
+            if(crawl->children[idx]==nullptr){
+                //crawl->children[idx]=getNode();
                 return word;
             }
-            crawler = crawler ->children[idx];
-            if(crawler->isEnd) return word.substr(0, i+1);
+            crawl=crawl->children[idx];
+            if(crawl->isEnd==true) return word.substr(0,i+1);
         }
         return word;
     }
     string replaceWords(vector<string>& dictionary, string sentence) {
-        stringstream ss(sentence);
+        string ans;
         string word;
-        string result;
         root = getNode();
-        for(string word: dictionary){
+        stringstream ss(sentence);
+        for(string& word: dictionary){
             insert(word);
         }
 
         while(getline(ss, word, ' ')){
-            result += search(word) + " ";
+            ans += search(word) + " ";
         }
-        result.pop_back();
-        return result;
+
+        ans.pop_back();
+        return ans;
         
     }
 };
