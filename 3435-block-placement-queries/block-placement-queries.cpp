@@ -1,77 +1,59 @@
 class Solution {
 public:
-    vector<int> seg;
-    const int MAXX = 50000;
-
-    void update(int node, int l, int r, int idx, int val){
-        if(l==r){
-            seg[node]=val;
-            return;
-        }
-
-        int mid = (l+r) / 2;
-
-        if(idx <= mid) update(2*node,l,mid,idx,val);
-        else update(2*node+1, mid+1, r, idx, val);
-
-        seg[node] = max(seg[2*node], seg[2*node+1]);
-    }
-
-    int query(int node, int l, int r, int ql, int qr){
-        if(ql>r || qr<l) return 0;
-        if(ql<=l && r<= qr) return seg[node];
-        int mid = (l+r) / 2;
-
-        return max(
-            query(2*node, l, mid, ql, qr),
-            query(2*node+1,mid+1, r, ql, qr)
-        );
-    }
-    vector<bool> getResults(vector<vector<int>>& queries) {
-
-        seg.resize(4*(MAXX+1),0);
-        set<int> obstacles;
-        obstacles.insert(0);
-
-        for(auto &q: queries){
-            if(q[0]==1) obstacles.insert(q[1]);
-        }
-
-        vector<int> pos(obstacles.begin(), obstacles.end());
-
-        for(int i=1;i<(int)pos.size();i++){
-            update(1,0,MAXX,pos[i],pos[i]-pos[i-1]);
-        }
-
+    vector<bool> getResults(vector<vector<int>>& q) {
         vector<bool> ans;
+        int n = q.size();
+        vector<int> bar;
+        map<int, pair<int, int>> mpp;
+        set<pair<int,int>> s;
+        bar.push_back(0);
+        bar.push_back(50001);
+        for(int i=0;i<n;i++){
+            if(q[i][0]==1) bar.push_back(q[i][1]);
+        }
 
-        for(int i=(int)queries.size()-1;i>=0;i--){
-            if(queries[i][0]==2){
-                int x = queries[i][1];
-                int sz = queries[i][2];
+        sort(bar.begin(), bar.end());
+        int sz = bar.size();
+        mpp[bar[0]] = {bar[0], bar[1]};
 
-                auto it = prev(obstacles.upper_bound(x));
-                int prevObstacle = *it;
-                int best = query(1,0,MAXX,0,prevObstacle);
+        for(int i=1;i<sz-1;i++) mpp[bar[i]] = {bar[i-1], bar[i+1]};
 
-                best = max(best, x-prevObstacle);
-                ans.push_back(best>=sz);
-            }else{
-                int x = queries[i][1];
-                auto it = obstacles.find(x);
+        mpp[bar[sz-1]] = {bar[sz-2], 0};
 
-                int leftPos = *prev(it);
-                update(1,0,MAXX,x,0);
-                auto rightIt = next(it);
-                if(rightIt != obstacles.end()){
-                    int rightPos = *rightIt;
-                    update(1,0,MAXX,rightPos, rightPos-leftPos);
+        for(int i=0;i<sz-1;i++) s.insert({bar[i+1]-bar[i],bar[i]});
+        s.insert({0,bar[sz-1]});
+
+        for(int i=n-1;i>=0;i--){
+            if(q[i][0]==1){
+                int x=q[i][1];
+                int xL = mpp[x].first;
+                int xR = mpp[x].second;
+                s.erase({x-xL,xL});
+                s.erase({xR-x, x});
+                mpp[xL].second=xR;
+                mpp[xR].first = xL;
+                s.insert({xR-xL,xL});
+            }
+            else{
+                int x = q[i][1];
+                int dist = q[i][2];
+                if(dist>x){
+                    ans.push_back(false);
+                    continue;
                 }
-                obstacles.erase(it);
+
+                auto it = s.lower_bound({dist,0});
+                bool can = false;
+                for(it;it!=s.end();it++){
+                    if(dist+it->second<=x){
+                        can = true;
+                        break;
+                    }
+                }
+                ans.push_back(can);
             }
         }
         reverse(ans.begin(), ans.end());
         return ans;
-        
     }
 };
