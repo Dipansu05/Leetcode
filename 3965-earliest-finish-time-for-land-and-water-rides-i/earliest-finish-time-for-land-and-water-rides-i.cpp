@@ -1,20 +1,21 @@
 class Solution {
 public:
-    int calFinishTime(vector<int>& ls, vector<int>& ld, vector<int>& ws, vector<int>& wd){
-        int mini = INT_MAX;
-        for(int i=0;i<ls.size();i++){
-            mini=min(mini,ls[i]+ld[i]);
+    int do_cal(vector<int>& start1, vector<int>& fd, vector<int>& start2, vector<int>& sd){
+        int first = INT_MAX;
+        for(int i =0;i< start1.size(); i++){
+            first = min(first, start1[i]+fd[i]);
         }
-        int ans = INT_MAX;
-        for(int i=0;i<ws.size();i++){
-            ans=min(ans,max(mini,ws[i])+wd[i]);
+
+        int second = INT_MAX;
+        for(int i =0;i< start2.size(); i++){
+            second = min(second, max(start2[i],first)+sd[i]);
         }
-        return ans;
+        return second;
     }
     int earliestFinishTime(vector<int>& landStartTime, vector<int>& landDuration, vector<int>& waterStartTime, vector<int>& waterDuration) {
         return min(
-        calFinishTime(landStartTime,landDuration,waterStartTime,waterDuration),
-        calFinishTime(waterStartTime,waterDuration,landStartTime,landDuration)
+            do_cal(landStartTime, landDuration, waterStartTime, waterDuration),
+            do_cal(waterStartTime,waterDuration,landStartTime, landDuration)
         );
         
     }
