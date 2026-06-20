@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int maxBuilding(int n, vector<vector<int>>& res) {
+        res.push_back({1,0});
+        sort(res.begin(), res.end());
+        if(res.back()[0]!=n) res.push_back({n,n-1});
+
+        int m = res.size();
+        for(int i=1;i<m;i++){
+            int dist = res[i][0] - res[i-1][0];
+            res[i][1]=min(res[i][1], res[i-1][1]+dist);
+        }
+
+        for(int i= m-2 ; i>=0; i--){
+            int dist = res[i+1][0] - res[i][0];
+            res[i][1]=min(res[i][1],res[i+1][1]+dist);
+        }
+
+        long long ans{0};
+
+        for(int i=1;i<m;i++){
+            long long x1 = res[i-1][0];
+            long long h1 = res[i-1][1];
+
+            long long x2 = res[i][0];
+            long long h2 = res[i][1];
+
+            long long d = x2-x1;
+            ans = max(ans, (h1+h2+d)/2);
+        }
+        return (int)ans;
+    }
+};
