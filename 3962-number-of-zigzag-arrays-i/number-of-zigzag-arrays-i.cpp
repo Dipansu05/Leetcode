@@ -1,35 +1,31 @@
 class Solution {
 public:
-    int MOD = 1e9 + 7;
+    int MOD = 1e9+7;
+    typedef long long ll;
     int zigZagArrays(int n, int l, int r) {
-        int m = r-l+1;
-        vector<long long> up(m+1), down(m+1);
-        for(int v=1;v<=m;v++){
-            up[v]=v-1;
-            down[v]=m-v;
+        int N = n;
+        int M = r-l+1;
+        ll t[2001][2001][2];
+        for(int prevVal=1;prevVal<=M;prevVal++){
+            t[N][prevVal][0] = 1;
+            t[N][prevVal][1] = 1;
         }
-        vector<long long> pref(m+1,0);
-        vector<long long> suff(m+2,0);
-        vector<long long> newUp(m+1), newDown(m+1);
-
-        for(int len=3;len<=n;len++){
-            for(int i=1;i<=m;i++){
-                pref[i]=(pref[i-1]+down[i])%MOD;
-            }
-            for(int i=m;i>=1;i--){
-                suff[i]=(suff[i+1]+up[i])%MOD;
-            }
-            for(int x=1;x<=m;x++){
-                newUp[x] = pref[x-1];
-                newDown[x] = suff[x+1];
-            }
-            up = newUp;
-            down = newDown;
+        for(int i=N-1;i>=0;i--){
+            vector<ll> prefDir0(M+1,0);
+            vector<ll> prefDir1(M+1,0);
+            for(int prevVal=1;prevVal<=M;prevVal++){
+                prefDir0[prevVal]=(prefDir0[prevVal-1]+t[i+1][prevVal][0])%MOD;
+                prefDir1[prevVal]=(prefDir1[prevVal-1]+t[i+1][prevVal][1])%MOD;
+           }for(int prevVal=1;prevVal<=M;prevVal++){
+                t[i][prevVal][1] = (prefDir0[M]-prefDir0[prevVal]+MOD)%MOD;
+                t[i][prevVal][0] = prefDir1[prevVal-1];
+           }
         }
-        long long ans{0};
-        for(int v=1;v<=m;v++){
-            ans=(ans+up[v]+down[v])%MOD;
+        ll result=0;
+        for(int startVal=1;startVal<=M;startVal++){
+            result = (result+t[1][startVal][1])%MOD;
+            result = (result+t[1][startVal][0])%MOD;
         }
-        return (int)ans;
+        return result;
     }
 };
