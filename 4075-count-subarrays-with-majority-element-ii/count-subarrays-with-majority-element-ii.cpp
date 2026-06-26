@@ -1,48 +1,22 @@
 class Solution {
 public:
-    struct Fenwick{
-        int n;
-        vector<int> bit;
-
-        Fenwick(int n) : n(n), bit(n+1,0){}
-
-        void add(int idx, int val){
-            while(idx<=n){
-                bit[idx] += val;
-                idx += idx & -idx;
-            }
-        }
-
-        int sum(int idx){
-            int res{0};
-            while(idx>0){
-                res += bit[idx];
-                idx -= idx & -idx;
-            }
-            return res;
-        }
-    };
     long long countMajoritySubarrays(vector<int>& nums, int target) {
-        int n =  nums.size();
-        vector<int> pref(n+1,0);
-        for(int i=0;i<n;i++){
-            pref[i+1]=pref[i]+(nums[i]==target?1:-1);
+        unordered_map<int, int> mp;
+        int cumSum{0};
+        mp[0]=1;
+        long long validLeftPoints{0};
+        long long result{0};
+        for(int j=0;j<nums.size();j++){
+            if(nums[j]==target){
+                validLeftPoints += mp[cumSum];
+                cumSum += 1;
+            }else{
+                cumSum -= 1;
+                validLeftPoints -=  mp[cumSum];
+            }
+            mp[cumSum] += 1;
+            result += validLeftPoints;
         }
-
-        vector<int> vals = pref;
-        sort(vals.begin(), vals.end());
-        vals.erase(unique(vals.begin(), vals.end()), vals.end());
-
-        Fenwick ft(vals.size());
-
-        long long ans{0};
-
-        for(int x: pref){
-            int id = lower_bound(vals.begin(), vals.end(), x) - vals.begin()+1;
-            ans+=ft.sum(id-1);
-            ft.add(id,1);
-        }
-        return ans;
-
+        return result;
     }
 };
