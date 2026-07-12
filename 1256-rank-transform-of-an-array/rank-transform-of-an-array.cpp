@@ -3,14 +3,13 @@ public:
     vector<int> arrayRankTransform(vector<int>& arr) {
         vector<int> temp = arr;
         sort(temp.begin(), temp.end());
-        unordered_map<int, int> rank;
+        unordered_map<int,int> rank;
         int r{1};
-
-        for(int num: temp){
-            if(!rank.count(num)) rank[num] = r++;
+        for(int n: temp){
+            if(!rank.count(n)) rank[n] = r++;
         }
-        for(int &num: arr){
-            num = rank[num];
+        for(int &n: arr){
+            n = rank[n];
         }
         return arr;
     }
