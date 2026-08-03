@@ -1,18 +1,32 @@
 class Solution:
-    def stoneGameIII(self, stoneValues: List[int]) -> str:
-        n = len(stoneValues)
-        dp = [0] * (n+1)
-        for i in range(n-1, -1, -1):
-            dp[i] = float("-inf")
-            total = 0
+    def stoneGameIII(self, stones: List[int]) -> str:
+        n = len(stones)
+        dp = [-1] * (n+1)
 
-            for j in range(i, min(n, i+3)):
-                total += stoneValues[j]
-                dp[i] = max(dp[i], total-dp[j+1])
-        
-        if dp[0] > 0:
+        def solve(i):
+            if i>=n:
+                return 0
+
+            if dp[i] != -1:
+                return dp[i]
+
+            res = stones[i] - solve(i+1)
+
+            if i+1<n:
+                res = max(res, stones[i]+stones[i+1]-solve(i+2))
+
+            if i+2<n:
+                res = max(res, stones[i]+stones[i+1]+stones[i+2]-solve(i+3))
+
+            dp[i] = res
+            return res
+
+        ans = solve(0)
+        if ans > 0:
             return "Alice"
-        elif dp[0] < 0:
+        elif ans < 0:
             return "Bob"
         else:
             return "Tie"
+
+
