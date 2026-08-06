@@ -1,32 +1,39 @@
 class Solution:
     def remainingMethods(self, n: int, k: int, invocations: List[List[int]]) -> List[int]:
 
-        graph = [[] for _ in range(n)]
-
+        adj = [[] for _ in range(n)]
+        indegree=[0]*n
+        suspicious = [False]*n
         for u, v in invocations:
-            graph[u].append(v)
+            adj[u].append(v)
+            indegree[v] += 1
 
-        vis = [False] * n
+        queue = deque([k])
+        suspicious[k] = True
 
-        def dfs(u):
-            vis[u] = True
+        while queue:
+            curr = queue.popleft()
+            for neighbor in adj[curr]:
+                indegree[neighbor] -= 1
 
-            for v in graph[u]:
-                if not vis[v]:
-                    dfs(v)
+                if not suspicious[neighbor]:
+                    suspicious[neighbor] = True
+                    queue.append(neighbor)
 
-        dfs(k)
-
-        for u, v in invocations:
-            if not vis[u] and vis[v]:
-                return list(range(n))
-
-        ans = []
+        result = []
+        cannot_remove = False
 
         for i in range(n):
-            if not vis[i]:
-                ans.append(i)
+            if suspicious[i] and indegree[i] > 0:
+                cannot_remove = True
+                break
 
-        return ans
+            if not suspicious[i]:
+                result.append(i)
+
+        if cannot_remove:
+            return list(range(n))
+
+        return result
 
         
