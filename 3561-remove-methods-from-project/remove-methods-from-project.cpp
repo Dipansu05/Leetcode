@@ -11,16 +11,17 @@ public:
         function<void(int)> dfs = [&](int u){
             vis[u] = true;
             for(int v: graph[u]){
-                if (!vis[v]) dfs(v);
+                if(!vis[v]) dfs(v);
             }
         };
 
         dfs(k);
 
         for(auto &edge: invocations){
-            int u=edge[0];
-            int v=edge[1];
-            if (!vis[u] && vis[v]){
+            int u = edge[0];
+            int v = edge[1];
+
+            if(!vis[u] && vis[v]){
                 vector<int> ans;
                 for(int i=0;i<n;i++){
                     ans.push_back(i);
@@ -33,6 +34,7 @@ public:
         for(int i=0;i<n;i++){
             if(!vis[i]) ans.push_back(i);
         }
+
         return ans;
     }
 };
