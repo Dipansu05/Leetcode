@@ -1,40 +1,51 @@
 class Solution {
 public:
     vector<int> remainingMethods(int n, int k, vector<vector<int>>& invocations) {
-        vector<vector<int>> graph(n);
-        for(auto &edge: invocations){
-            graph[edge[0]].push_back(edge[1]);
-        }
-
-        vector<bool> vis(n, false);
-
-        function<void(int)> dfs = [&](int u){
-            vis[u] = true;
-            for(int v: graph[u]){
-                if(!vis[v]) dfs(v);
-            }
-        };
-
-        dfs(k);
+        vector<vector<int>> adj(n);
+        vector<int> indegree(n, 0);
+        vector<bool> sus(n, false);
 
         for(auto &edge: invocations){
             int u = edge[0];
             int v = edge[1];
+            adj[u].push_back(v);
+            indegree[v]++;
+        }
 
-            if(!vis[u] && vis[v]){
-                vector<int> ans;
-                for(int i=0;i<n;i++){
-                    ans.push_back(i);
+        queue<int> q;
+        q.push(k);
+        sus[k] = true;
+
+        while(!q.empty()){
+            int curr = q.front();
+            q.pop();
+            for(int &ngbr: adj[curr]){
+                indegree[ngbr]--;
+                if(!sus[ngbr]){
+                    q.push(ngbr);
+                    sus[ngbr]=true;
                 }
-                return ans;
             }
         }
 
-        vector<int> ans;
+        vector<int> res;
+        bool cannotRemove=false;
         for(int i=0;i<n;i++){
-            if(!vis[i]) ans.push_back(i);
+            if(sus[i] && indegree[i]>0){
+                cannotRemove = true;
+                break;
+            }
+            if(!sus[i]) res.push_back(i);
         }
 
-        return ans;
+        if(cannotRemove){
+            vector<int> vec(n);
+            for(int i=0;i<n;i++){
+                vec[i] = i;
+            }
+            return vec;
+        }
+
+        return res;
     }
 };
