@@ -1,23 +1,30 @@
 class Solution {
 public:
     double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-        int left = (nums1.size() + nums2.size() + 1) / 2;
-        int right = (nums1.size() + nums2.size() + 2) / 2;
-        return (getKth(nums1, nums1.size(), nums2, nums2.size(), left, 0, 0) + getKth(nums1, nums1.size(), nums2, nums2.size(), right, 0, 0)) / 2.0;
-    }
+        vector<int>& A = nums1;
+        vector<int>& B = nums2;
+        int total = A.size() + B.size();
+        int half = (total+1) / 2;
+        if(B.size() < A.size()) swap(A, B);
 
-    int getKth(vector<int>& a, int m, vector<int>& b, int n, int k, int aStart, int bStart){
-        if (m>n) return getKth(b, n, a, m, k, bStart, aStart);
-        if (m==0) return b[bStart+k-1];
-        if (k==1) return min(a[aStart], b[bStart]);
+        int l = 0;
+        int r = A.size();
+        while(l<=r){
+            int i = (l+r) / 2;
+            int j = half - i;
+            int Aleft = i>0 ? A[i-1] : INT_MIN;
+            int Aright = i<A.size() ? A[i] : INT_MAX;
+            int Bleft = j>0 ? B[j-1] : INT_MIN;
+            int Bright = j<B.size() ? B[j] : INT_MAX;
 
-        int i = min(m, k/2);
-        int j = min(n, k/2);
-
-        if(a[aStart+i-1]>b[bStart+j-1]){
-            return getKth(a, m, b, n-j, k-j, aStart, bStart + j);
-        }else{
-            return getKth(a, m-i, b, n, k-i, aStart+i, bStart);
+            if(Aleft <= Bright && Bleft <= Aright){
+                if(total%2!=0){
+                    return max(Aleft, Bleft);
+                }
+                return (max(Aleft, Bleft) + min(Aright, Bright)) / 2.0;
+            }else if(Aleft>Bright) r = i-1;
+            else l = i+1;
         }
+        return -1;
     }
 };
