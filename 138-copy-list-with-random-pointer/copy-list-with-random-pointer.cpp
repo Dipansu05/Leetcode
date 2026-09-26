@@ -16,14 +16,22 @@ public:
 
 class Solution {
 public:
-    unordered_map<Node*, Node*> map;
     Node* copyRandomList(Node* head) {
-        if(head==nullptr) return nullptr;
-        if(map.count(head)) return map[head];
-        Node* copy = new Node(head->val);
-        map[head] = copy;
-        copy->next = copyRandomList(head->next);
-        copy->random = map[head->random];
-        return copy;
+        unordered_map<Node*, Node*> oldToCopy;
+        oldToCopy[NULL] = NULL;
+        Node* cur = head;
+        while(cur != NULL){
+            Node* copy = new Node(cur->val);
+            oldToCopy[cur] = copy;
+            cur = cur->next;
+        }
+        cur = head;
+        while(cur!=NULL){
+            Node* copy = oldToCopy[cur];
+            copy->next = oldToCopy[cur->next];
+            copy->random = oldToCopy[cur->random];
+            cur = cur->next;
+        }
+        return oldToCopy[head];
     }
 };
