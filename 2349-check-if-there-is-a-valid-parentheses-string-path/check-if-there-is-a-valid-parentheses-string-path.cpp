@@ -1,28 +1,26 @@
 class Solution {
 public:
-    bool hasValidPath(vector<vector<char>>& grid) {
-        int m = grid.size(), n = grid[0].size();
-        if((m+n-1)%2!=0) return false;
-        int maxBal = m+n;
-        vector<vector<vector<bool>>> dp(m, vector<vector<bool>>(n, vector<bool>(maxBal, false)));
-        int start = grid[0][0] == '(' ? 1 : -1;
-        if(start<0) return false;
-        dp[0][0][start]=true;
-        for(int i=0;i<m;i++){
-            for(int j=0;j<n;j++){
-                for(int bal=0;bal<maxBal;bal++){
-                    if(!dp[i][j][bal]) continue;
-                    if(i+1<m){
-                        int nb =bal+(grid[i+1][j]=='('?1:-1);
-                        if(nb>=0 && nb<maxBal) dp[i+1][j][nb]=true;
-                    }
-                    if(j+1<n){
-                        int nb=bal+(grid[i][j+1]=='('?1:-1);
-                        if(nb>=0 && nb<maxBal) dp[i][j+1][nb]=true;
-                    }
-                }
-            }
+    int m, n;
+    int t[101][101][201];
+    bool solve(int i, int j, int open, vector<vector<char>>& grid){
+        open += (grid[i][j]=='(') ? 1:-1;
+        if (open < 0) return false;
+        if(t[i][j][open]!=-1) return t[i][j][open];
+        if(i==m-1 && j==n-1) return t[i][j][open] = (open == 0);
+        if(i+1<m){
+            if(solve(i+1,j,open,grid)) return t[i][j][open] = true;
         }
-        return dp[m-1][n-1][0];
+        if(j+1<n){
+            if(solve(i,j+1,open,grid)) return t[i][j][open] = true;
+        }
+        return t[i][j][open] = false;
+    }
+    bool hasValidPath(vector<vector<char>>& grid) {
+        m = grid.size();
+        n = grid[0].size();
+        if((m+n-1)%2==1) return false;
+        if(grid[0][0]==')' || grid[m-1][n-1]=='(') return false;
+        memset(t, -1, sizeof(t));
+        return solve(0,0,0,grid);
     }
 };
