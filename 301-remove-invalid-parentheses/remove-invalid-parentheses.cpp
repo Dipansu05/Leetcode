@@ -1,36 +1,41 @@
 class Solution {
 public:
-    void forward(string s, auto& res, int li, int lj){
-        int bal{0};
-        for(int i=li;i<s.length();i++){
-            bal += (s[i]=='(')-(s[i]==')');
-            if(bal>=0) continue;
-            for(int j=lj;j<=i;j++){
-                if(s[j]==')'&&(j==lj||s[j-1]!=')'))
-                    forward(s.substr(0,j)+s.substr(j+1),res,i,j);
-            }
-            return;
-        }
-        backward(s, res, s.length()-1, s.length()-1);
-    }
-    void backward(string s, auto& res, int ri, int rj){
-        int bal=0;
-        for(int i=ri;i>=0;i--){
-            bal += (s[i]==')') - (s[i]=='(');
-            if(bal>=0) continue;
-            for(int j=rj; j>=i; j--){
-                if(s[j]=='(' && (j==rj || s[j+1]!='(')){
-                    backward(s.substr(0,j)+s.substr(j+1), res, i-1, j-1);
+    vector<string> res;
+    unordered_set<string> st;
+    //int maxLen{0};
+    int n;
+    void solve(int i, string &s, int count, string& curr, int &maxLen){
+        if(count<0) return;
+        if(i==n){
+            if(count==0){
+                if(curr.length()>maxLen){
+                    maxLen=curr.length();
+                    st.clear();
                 }
-                
+                if(curr.length()==maxLen){
+                    st.insert(curr);
+                }
             }
             return;
         }
-        res.push_back(s);
+        if(s[i]!=')' && s[i]!='('){
+            curr.push_back(s[i]);
+            solve(i+1, s, count, curr, maxLen);
+            curr.pop_back();
+            return;
+        }
+        curr.push_back(s[i]);
+        solve(i+1,s,count + (s[i]==')' ? -1 : 1), curr, maxLen);
+        curr.pop_back();
+        solve(i+1,s,count, curr, maxLen);
+
     }
     vector<string> removeInvalidParentheses(string s) {
-        vector<string> res;
-        forward(s, res, 0, 0);
-        return res;
+        n=s.size();
+        string curr="";
+        int maxLen=0;
+        solve(0, s, 0, curr, maxLen);
+        //return res;
+        return vector<string>(begin(st), end(st));
     }
 };
