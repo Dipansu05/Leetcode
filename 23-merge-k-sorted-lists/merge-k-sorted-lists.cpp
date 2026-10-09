@@ -11,20 +11,20 @@
 class Solution {
 public:
     ListNode* mergeKLists(vector<ListNode*>& lists) {
-        vector<int> nodes;
-        for(ListNode* lst: lists){
-            while(lst){
-                nodes.push_back(lst->val);
-                lst=lst->next;
+        ListNode* res = new ListNode(0);
+        ListNode* cur = res;
+
+        while(true){
+            int minNode=-1;
+            for(int i=0;i<lists.size();i++){
+                if(!lists[i]) continue;
+                if(minNode==-1 || lists[minNode]->val>lists[i]->val) minNode=i;
             }
+            if(minNode==-1) break;
+            cur->next=lists[minNode];
+            lists[minNode]=lists[minNode]->next;
+            cur=cur->next;
         }
-        sort(begin(nodes), end(nodes));
-        ListNode* ans = new ListNode(0);
-        ListNode* temp = ans;
-        for(int x: nodes){
-            temp->next=new ListNode(x);
-            temp=temp->next;
-        }
-        return ans->next;
+        return res->next;
     }
 };
