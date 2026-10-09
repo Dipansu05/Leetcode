@@ -10,21 +10,31 @@
  */
 class Solution {
 public:
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
-        ListNode* res = new ListNode(0);
-        ListNode* cur = res;
-
-        while(true){
-            int minNode=-1;
-            for(int i=0;i<lists.size();i++){
-                if(!lists[i]) continue;
-                if(minNode==-1 || lists[minNode]->val>lists[i]->val) minNode=i;
+    ListNode* merge(ListNode* l1, ListNode* l2){
+        ListNode* dummy=new ListNode(0);
+        ListNode* cur=dummy;
+        while(l1!=nullptr && l2!=nullptr){
+            if(l1->val<=l2->val){
+                cur->next=l1;
+                l1=l1->next;
+            }else{
+                cur->next=l2;
+                l2=l2->next;
             }
-            if(minNode==-1) break;
-            cur->next=lists[minNode];
-            lists[minNode]=lists[minNode]->next;
             cur=cur->next;
         }
-        return res->next;
+        if(l1!=nullptr){
+            cur->next=l1;
+        }else{
+            cur->next=l2;
+        }
+        return dummy->next;
+    }
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        if(lists.empty()) return nullptr;
+        for(int i=1;i<lists.size();i++){
+            lists[i]=merge(lists[i],lists[i-1]);
+        }
+        return lists.back();
     }
 };
