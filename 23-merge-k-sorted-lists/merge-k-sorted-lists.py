@@ -5,31 +5,37 @@
 #         self.next = next
 class Solution:
     def mergeKLists(self, lists: list[ListNode | None]) -> ListNode | None:
-        if len(lists)==0:
+        if not lists or len(lists) == 0:
             return None
+        return self.divide(lists,0,len(lists)-1)
 
-        for i in range(1,len(lists)):
-            lists[i]=self.mergeList(lists[i-1], lists[i])
+    def divide(self, lists, l, r):
+        if l > r:
+            return None
+        if l==r:
+            return lists[l]
 
-        return lists[-1]
+        mid = l + (r-l) // 2
+        left = self.divide(lists,l,mid)
+        right = self.divide(lists,mid+1,r)
+        return self.conquer(left, right)
 
-    def mergeList(self, l1, l2):
+    def conquer(self, l1, l2):
+        dummy = ListNode(0)
+        curr = dummy
 
-            dummy = ListNode()
-            curr = dummy
-
-            while l1 and l2:
-                if l1.val < l2.val:
-                    curr.next=l1
-                    l1=l1.next
+        while l1 and l2:
+                if l1.val <= l2.val:
+                    curr.next = l1
+                    l1 = l1.next
                 else:
-                    curr.next=l2
+                    curr.next = l2
                     l2=l2.next
                 curr=curr.next
 
-            if l1:
-                curr.next=l1
-            if l2:
-                curr.next=l2
+        if l1:
+            curr.next=l1
+        else:
+            curr.next=l2
 
-            return dummy.next
+        return dummy.next
