@@ -1,25 +1,24 @@
 class Solution {
 public:
+    int MOD=1e9+7;
     int maxSum(vector<int>& nums, int k) {
-        const int MOD=1e9+7;
-        int n=nums.size();
-        vector<int> cnt(30, 0);
-        for(int x: nums){
+        vector<int> count(30, 0);
+        for(int num: nums){
+            for(int b=0;b<30; b++){
+                if(num & (1<<b)) count[b]++;
+            }
+        }
+        int result{0};
+        while(k--){
+            long long curr=0;
             for(int b=0;b<30;b++){
-                if(x&(1<<b)) cnt[b]++;
+                if(count[b]>0){
+                    count[b]--;
+                    curr = (curr |= (1<<b));
+                }
             }
+            result = (result + (curr*curr)) %MOD;
         }
-        vector<long long> a(n, 0);
-        for(int b=29;b>=0;b--){
-            int c=cnt[b];
-            for(int i=0;i<c;i++){
-                a[i] |= (1LL << b);
-            }
-        }
-        long long ans=0;
-        for(int i=0;i<k;i++){
-            ans = (ans+a[i]*a[i])%MOD;
-        }
-        return (int)ans;
+        return result;
     }
 };
