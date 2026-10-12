@@ -10,31 +10,26 @@
  */
 class Solution {
 public:
-    ListNode* merge(ListNode* l1, ListNode* l2){
-        ListNode* dummy=new ListNode(0);
-        ListNode* cur=dummy;
-        while(l1!=nullptr && l2!=nullptr){
-            if(l1->val<=l2->val){
-                cur->next=l1;
-                l1=l1->next;
-            }else{
-                cur->next=l2;
-                l2=l2->next;
-            }
-            cur=cur->next;
-        }
-        if(l1!=nullptr){
-            cur->next=l1;
-        }else{
-            cur->next=l2;
-        }
-        return dummy->next;
-    }
     ListNode* mergeKLists(vector<ListNode*>& lists) {
         if(lists.empty()) return nullptr;
-        for(int i=1;i<lists.size();i++){
-            lists[i]=merge(lists[i],lists[i-1]);
+        auto cmp = [](ListNode* a, ListNode* b) {return a->val > b->val;};
+        priority_queue<ListNode*, vector<ListNode*>, decltype(cmp)> minHeap(cmp);
+
+        for(ListNode* list: lists){
+            if(list!=nullptr) minHeap.push(list);
         }
-        return lists.back();
+
+        ListNode* res = new ListNode(0);
+        ListNode* cur = res;
+        while(!minHeap.empty()){
+            ListNode* node = minHeap.top();
+            minHeap.pop();
+            cur->next=node;
+            cur=cur->next;
+
+            node=node->next;
+            if(node!=nullptr) minHeap.push(node);
+        }
+        return res->next;
     }
 };
