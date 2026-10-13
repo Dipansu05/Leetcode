@@ -10,36 +10,35 @@
  */
 class Solution {
 public:
-    ListNode* divide(vector<ListNode*>& lists, int l, int r){
-        if(l>r) return nullptr;
-        if(l==r) return lists[l];
-        int mid=l+(r-l)/2;
-        ListNode* left=divide(lists, l, mid);
-        ListNode* right=divide(lists, mid+1, r);
-        return conquer(left, right);
-    }
-    ListNode* conquer(ListNode* l1, ListNode* l2){
-        ListNode dummy(0);
+    ListNode* merge(ListNode* l1, ListNode* l2){
+        ListNode dummy;
         ListNode* curr = &dummy;
         while(l1 && l2){
-            if(l1->val <= l2->val){
-                curr->next=l1;
+            if(l1->val < l2->val){
+                curr->next = l1;
                 l1=l1->next;
             }else{
-                curr->next=l2;
+                curr->next = l2;
                 l2=l2->next;
             }
             curr=curr->next;
         }
-        if(l1){
-            curr->next=l1;
-        }else{
-            curr->next=l2;
-        }
+        if(l1) curr->next=l1;
+        if(l2) curr->next=l2;
         return dummy.next;
     }
     ListNode* mergeKLists(vector<ListNode*>& lists) {
         if(lists.empty()) return nullptr;
-        return divide(lists, 0, lists.size()-1);
+
+        while(lists.size()>1){
+            vector<ListNode*> merged;
+            for(int i=0;i<lists.size();i+=2){
+                ListNode* l1 = lists[i];
+                ListNode* l2 = (i+1) < lists.size() ? lists[i+1] : nullptr;
+                merged.push_back(merge(l1, l2)); 
+            }
+            lists = merged;
+        }
+        return lists[0];
     }
 };
