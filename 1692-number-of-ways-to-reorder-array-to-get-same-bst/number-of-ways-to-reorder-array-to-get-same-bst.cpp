@@ -1,32 +1,35 @@
 class Solution {
 public:
-   long long solve(vector<int> &nums, vector<vector<long long>> &pascal)
-    {
-        int mod=1000000007;
-        if(nums.size()<=2)  return 1;
-        vector<int> leftsubtree,rightsubtree;
-        for(int i=1;i<nums.size();i++)
-        {
-            if(nums[i]<nums[0]) leftsubtree.push_back(nums[i]); 
-            else    rightsubtree.push_back(nums[i]);
+    typedef long long ll;
+    ll MOD = 1e9+7;
+    vector<vector<ll>> PT;
+    int solve(vector<int>& nums){
+        int n = nums.size();
+        if(n<3) return 1;
+        int root = nums[0];
+        vector<int> left, right;
+        for(int i=1;i<n;i++){
+            if(nums[i]<root) left.push_back(nums[i]);
+            else right.push_back(nums[i]);
         }
-        return (solve(leftsubtree,pascal)%mod*solve(rightsubtree,pascal)%mod*pascal[nums.size()-1][leftsubtree.size()]%mod)%mod;
+        ll x = solve(left);
+        ll y = solve(right);
+        ll z = PT[n-1][left.size()];
+
+        return (((x*y) % MOD) * z) % MOD;
     }
+
     int numOfWays(vector<int>& nums) {
-        int mod=1000000007;
-        int n=nums.size();
-        vector<vector<long long>> pascal(n);
-        for(int i=0;i<n;i++)
-        {
-            pascal[i].resize(i+1);
-            pascal[i][0]=1;
-            pascal[i][i]=1;
-            for(int j=1;j<i;j++)
-            {
-                pascal[i][j]=(pascal[i-1][j-1]+pascal[i-1][j])%mod;
+        int n = nums.size();
+        PT.resize(n);
+        for(int i=0;i<n;i++){
+            PT[i] = vector<ll>(i+1, 1);
+            for(int j=1;j<i;j++){
+                PT[i][j] = (PT[i-1][j] + PT[i-1][j-1])%MOD;
             }
         }
-        return solve(nums,pascal)-1;
+
+        return (solve(nums)-1)%MOD;
         
     }
 };
