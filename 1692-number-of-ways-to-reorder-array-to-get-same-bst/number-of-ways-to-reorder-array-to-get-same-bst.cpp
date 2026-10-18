@@ -1,35 +1,31 @@
 class Solution {
 public:
-    typedef long long ll;
-    ll MOD = 1e9+7;
-    vector<vector<ll>> PT;
-    int solve(vector<int>& nums){
-        int n = nums.size();
-        if(n<3) return 1;
-        int root = nums[0];
-        vector<int> left, right;
-        for(int i=1;i<n;i++){
-            if(nums[i]<root) left.push_back(nums[i]);
-            else right.push_back(nums[i]);
-        }
-        ll x = solve(left);
-        ll y = solve(right);
-        ll z = PT[n-1][left.size()];
-
-        return (((x*y) % MOD) * z) % MOD;
-    }
-
-    int numOfWays(vector<int>& nums) {
-        int n = nums.size();
-        PT.resize(n);
-        for(int i=0;i<n;i++){
-            PT[i] = vector<ll>(i+1, 1);
-            for(int j=1;j<i;j++){
-                PT[i][j] = (PT[i-1][j] + PT[i-1][j-1])%MOD;
+    int Mod = 1e9+7;
+    int compute_C_N_choose_K(int N, int K){
+        if(K>N/2) K=N-K;
+        vector<int> C_N(K+1, 0), prevC(K+1, 0);
+        for(int i=0;i<=N;i++){
+            C_N[0]=1;
+            for(int j=1;j<=min(i,K);j++){
+                C_N[j]=((long)prevC[j-1]+prevC[j])%Mod;
             }
+            prevC=C_N;
         }
-
-        return (solve(nums)-1)%MOD;
-        
+        return C_N[K];
+    }
+    long Subproblem(vector<int>& nums){
+        int n=nums.size();
+        if(n<=2) return 1;
+        vector<int> left, right;
+        int root=nums[0];
+        for(int i=1;i<n;i++){
+            if(root<nums[i]) right.push_back(nums[i]);
+            else left.push_back(nums[i]);
+        }
+        long r=Subproblem(right), l=Subproblem(left);
+        return compute_C_N_choose_K(n-1, left.size())*r%Mod*l%Mod;
+    }
+    int numOfWays(vector<int>& nums) {
+        return (Subproblem(nums)-1)%Mod;
     }
 };
