@@ -10,8 +10,7 @@ class Solution:
         for i, ch in enumerate(s):
             if ch in in_stack:
                 continue
-
-            while (stack and stack[-1] > ch and last[stack[-1]]>i):
+            while(stack and ch < stack[-1] and last[stack[-1]]>i):
                 in_stack.remove(stack.pop())
 
             stack.append(ch)
