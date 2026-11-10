@@ -1,17 +1,26 @@
 class Solution {
 public:
-    int climbStairs(int n, vector<int>& costs) {
-        vector<long long> dp(n+1, LLONG_MAX);
-        dp[0]=0;
-        for(int j=1;j<=n;j++){
-            for(int k=1;k<=3;k++){
-                int i=j-k;
-                if(i>=0){
-                    long long jump=(long long)(j-i)*(j-i);
-                    dp[j]=min(dp[j], dp[i]+costs[j-1]+jump);
-                }
-            }
+    vector<int> memo;
+    int solve(int i, int n, vector<int>& costs){
+        if(i==n) return 0;
+        if(memo[i]!=-1) return memo[i];
+        int cost=INT_MAX;
+        int j=i+1;
+        if(j<=n){
+            cost=solve(j,n,costs)+costs[j-1]+(j-i)*(j-i);
         }
-        return (int)dp[n];
+        j=i+2;
+        if(j<=n){
+            cost=min(cost,solve(j,n,costs)+costs[j-1]+(j-i)*(j-i));
+        }
+        j=i+3;
+        if(j<=n){
+            cost=min(cost,solve(j,n,costs)+costs[j-1]+(j-i)*(j-i));
+        }
+        return memo[i]=cost;
+    }
+    int climbStairs(int n, vector<int>& costs) {
+        memo.assign(n+1, -1);
+        return solve(0, n, costs);
     }
 };
