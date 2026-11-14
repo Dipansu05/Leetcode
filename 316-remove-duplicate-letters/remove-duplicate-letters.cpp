@@ -1,12 +1,12 @@
 class Solution {
 public:
     string removeDuplicateLetters(string s) {
-        int len = s.size();
+        int len=s.size();
         string res="";
         unordered_map<char, int> M;
         stack<char> S;
-        for(char c: s){
-            M[c]++;
+        for(char x: s){
+            M[x]++;
         }
         unordered_set<char> seen;
         for(char c: s){
@@ -24,7 +24,5 @@ public:
             S.pop();
         }
         return res;
-        
-
     }
 };
