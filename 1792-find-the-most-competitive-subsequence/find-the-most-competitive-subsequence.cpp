@@ -1,16 +1,16 @@
 class Solution {
 public:
     vector<int> mostCompetitive(vector<int>& nums, int k) {
-        vector<int> stack;
-        int nd = nums.size()-k;
-        for(int i=0;i<nums.size();i++){
-            while(!stack.empty() && nd && nums[i]<stack.back()){
-                stack.pop_back();
-                nd--;
+        vector<int> r;
+        int n = nums.size();
+        for(int i=0;i<n;i++){
+            while(!r.empty() && 
+            r.back() > nums[i] &&
+            (k-(r.size()-1))<=(n-i)){
+                r.pop_back();
             }
-            stack.push_back(nums[i]);
+            if(r.size() < k) r.push_back(nums[i]);
         }
-        return vector<int>(stack.begin(), stack.begin()+k);
-        
+        return r;
     }
 };
