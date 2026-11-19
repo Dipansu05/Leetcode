@@ -11,18 +11,19 @@
 class Solution {
 public:
     vector<int> nextLargerNodes(ListNode* head) {
-        vector<int> res, stack;
-        ListNode* p=head;
-        while(p){
-            res.push_back(p->val);
-            p=p->next;
+        vector<int> ans;
+        vector<int> stack;
+        ListNode* temp=head;
+        while(temp){
+            ans.push_back(temp->val);
+            temp=temp->next;
         }
-        for(int i=res.size()-1;i>=0;i--){
-            auto val=res[i];
-            while(!stack.empty() && stack.back() <= res[i]) stack.pop_back();
-            res[i]=stack.empty() ? 0 : stack.back();
+        for(int i=ans.size()-1;i>=0;i--){
+            auto val=ans[i];
+            while(!stack.empty() && stack.back() <= ans[i]) stack.pop_back();
+            ans[i] = stack.empty() ? 0 : stack.back();
             stack.push_back(val);
         }
-        return res;
+        return ans;
     }
 };
